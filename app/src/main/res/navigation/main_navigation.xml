@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/categoryListFragment">
+
+    <fragment
+        android:id="@+id/recipeDetailsFragment"
+        android:name="com.example.foodrecipesdemokotlin.ui.recipe_detail.RecipeDetailsFragment"
+        android:label="Recipe Detail">
+        <argument android:name="recipe" />
+        <action
+            android:id="@+id/action_recipeDetailsFragment_to_recipeListFragment"
+            app:destination="@id/recipeListFragment"
+            app:popUpTo="@+id/recipeListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipeListFragment"
+        android:name="com.example.foodrecipesdemokotlin.ui.recipe_list.RecipeListFragment"
+        android:label="Recipes List">
+        <action
+            android:id="@+id/action_recipeListFragment_to_recipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryListFragment"
+        android:name="com.example.foodrecipesdemokotlin.ui.category.CategoryListFragment"
+        android:label="Categories"
+        tools:layout="@layout/fragment_blank">
+        <action
+            android:id="@+id/action_categoryListFragment_to_recipeListFragment"
+            app:destination="@id/recipeListFragment" />
+        <action
+            android:id="@+id/action_categoryListFragment_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.foodrecipesdemokotlin.ui.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="com.example.foodrecipesdemokotlin.ui.BlankFragment"
+        android:label="BlankFragment" >
+        <action
+            android:id="@+id/action_blankFragment_to_recipeListFragment"
+            app:destination="@id/recipeListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

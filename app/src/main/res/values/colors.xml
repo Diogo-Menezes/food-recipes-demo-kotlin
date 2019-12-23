@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#ff8a80</color>
+    <color name="primaryLightColor">#ffbcaf</color>
+    <color name="primaryDarkColor">#c85a54</color>
+    <color name="secondaryColor">#ff9e80</color>
+    <color name="secondaryLightColor">#ffd0b0</color>
+    <color name="secondaryDarkColor">#c96f53</color>
+    <color name="primaryTextColor">#fff</color>
+    <color name="secondaryTextColor">#000</color>
+
+    <color name="red">#e22b2b</color>
+    <color name="lightGray">#EEEEEE</color>
+</resources>
