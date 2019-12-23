@@ -10,11 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.foodrecipesdemokotlin.R
+import kotlinx.android.synthetic.main.fragment_recipe_list.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class RecipeListFragment : Fragment() {
+
+    companion object {
+        fun newInstance() = RecipeListFragment()
+    }
 
     private val viewModel: RecipeListViewModel by lazy {
         ViewModelProviders.of(this).get(RecipeListViewModel::class.java)
@@ -24,17 +29,26 @@ class RecipeListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         subscribeUi()
         return inflater.inflate(R.layout.fragment_recipe_list, container, false)
 
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
+
+
     private fun subscribeUi() {
         viewModel.recipeList.observe(viewLifecycleOwner, Observer { recipeList ->
-            for (recipe in recipeList) {
-                Log.i("RecipeListFragment", "subscribeUi: ${recipe.toString()}")
-            }
+
+
+            text_view.text = recipeList.toString()
+        })
+
+        viewModel.status.observe(viewLifecycleOwner, Observer {
+            Log.i("RecipeListFragment", "subscribeUi: $it")
         })
     }
 

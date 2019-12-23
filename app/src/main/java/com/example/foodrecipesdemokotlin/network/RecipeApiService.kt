@@ -1,6 +1,5 @@
 package com.example.foodrecipesdemokotlin.network
 
-import com.example.foodrecipesdemokotlin.models.Recipe
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -14,25 +13,28 @@ private const val BASE_URL = "https://recipesapi.herokuapp.com/api/"
 
 interface RecipeApiService {
     @GET("search")
-    suspend fun searchRecipes(
-        @Query("key") key: String="",
+    fun searchRecipesAsync(
+        @Query("key") key: String = "",
         @Query("q") query: String,
         @Query("page") page: String
-    ): Deferred<List<Recipe>>
+    ): Deferred<NetworkRecipesContainer>
+
 
     @GET("get")
-    suspend fun getRecipe(
-        @Query("key") key: String="",
+    fun getRecipeAsync(
+        @Query("key") key: String = "",
         @Query("rId") recipeId: String
-    ): Deferred<Recipe>
+    ): Deferred<NetworkRecipe>
 }
 
-private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+private val moshi = Moshi.Builder()
+    .add(KotlinJsonAdapterFactory())
+    .build()
 
 private val retrofit = Retrofit.Builder()
-    .baseUrl(BASE_URL)
     .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .addConverterFactory(MoshiConverterFactory.create(moshi))
+    .baseUrl(BASE_URL)
     .build()
 
 object RecipeApi {
