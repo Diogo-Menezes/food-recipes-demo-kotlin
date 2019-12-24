@@ -19,7 +19,7 @@
         android:paddingBottom="8dp">
 
         <ImageView
-            android:id="@+id/recipe_image"
+            android:id="@+id/recipe_list_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/recipe_image_list_height"
             android:contentDescription="@string/recipe_image"
@@ -35,7 +35,7 @@
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/recipe_title"
+                android:id="@+id/recipe_list_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -61,7 +61,7 @@
             android:weightSum="100">
 
             <TextView
-                android:id="@+id/recipe_publisher"
+                android:id="@+id/recipe_list_publisher"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -72,7 +72,7 @@
                 tools:text="Publisher" />
 
             <TextView
-                android:id="@+id/recipe_social_score"
+                android:id="@+id/recipe_list_social_score"
                 android:layout_width="42dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"

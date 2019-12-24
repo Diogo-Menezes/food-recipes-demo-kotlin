@@ -1,39 +1,60 @@
 package com.example.foodrecipesdemokotlin
 
-import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.content.Context
 import android.view.View
-import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.example.foodrecipesdemokotlin.ui.BaseViewModel
-import com.example.foodrecipesdemokotlin.ui.Status
-import kotlinx.android.synthetic.main.loading_layout.*
-import kotlinx.coroutines.*
+import com.example.foodrecipesdemokotlin.viewmodels.Status
+import com.example.foodrecipesdemokotlin.ui.StatusListener
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.loading_layout.load_layout
 
 private const val FADE_DURATION = 1000L
 
-abstract class BaseActivity : AppCompatActivity() {
-
+abstract class BaseActivity : AppCompatActivity(),
+    StatusListener {
 
 
     private fun animateToGone(view: View) {
-        CoroutineScope(Dispatchers.Main).launch {
-            view.animate().alpha(0f).duration = FADE_DURATION
-            delay(FADE_DURATION)
-            view.visibility = View.GONE
-        }
+        val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 0f)
+        animator.duration = FADE_DURATION
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                view.visibility = View.GONE
+            }
+        })
+        animator.start()
     }
 
     private fun animateToVisible(view: View) {
-        view.run {
-            visibility = VISIBLE
-            alpha = 0f
-            animate().alpha(1f).duration = FADE_DURATION
+        val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
+        animator.duration = FADE_DURATION
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) {
+                view.visibility = View.VISIBLE
+            }
+        })
+        animator.start()
+    }
+
+    override fun setStatus(status: Status) {
+        when (status) {
+            Status.NONE -> return
+            Status.LOADING -> showProgress(true)
+            Status.ERROR -> showError() //// TODO("24/12/2019 - add message")
+            Status.DONE -> showProgress(false)
         }
+    }
+
+    fun Context.makeSnack(message: String) {
+        Snackbar.make(main_layout, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun showError(message: String="Error") {
+        applicationContext.makeSnack(message)
     }
 
     protected fun showProgress(show: Boolean) {
@@ -42,25 +63,4 @@ abstract class BaseActivity : AppCompatActivity() {
             false -> animateToGone(load_layout)
         }
     }
-
-    open override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        Log.i("BaseActivity", "onCreate: called")
-//        subscribeUi()
-    }
-
-//    fun subscribeUi() {
-//        Log.i("BaseActivity", "subscribeUi: called")
-//        viewModel.status.observe(this, Observer { status ->
-//            Log.i("BaseActivity", "subscribeUi: $status")
-//            when (status) {
-//                Status.LOADING -> showProgress(true)
-//                Status.ERROR -> Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
-//                Status.DONE -> showProgress(false)
-//                Status.NONE -> showProgress(false)
-//                else -> {
-//                }
-//            }
-//        })
-//    }
 }

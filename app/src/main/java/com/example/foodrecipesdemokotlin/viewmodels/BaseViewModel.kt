@@ -1,22 +1,22 @@
-package com.example.foodrecipesdemokotlin.ui
+package com.example.foodrecipesdemokotlin.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.foodrecipesdemokotlin.ui.Status.NONE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 
 
-enum class Status {
+enum class Status() {
     LOADING,
     ERROR,
     DONE,
     NONE
 }
 
-abstract class BaseViewModel : ViewModel() {
+abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
     protected var viewModelJob = Job()
     protected val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
@@ -26,7 +26,7 @@ abstract class BaseViewModel : ViewModel() {
         get() = _status
 
     init {
-        _status.value = NONE
+        _status.value = Status.NONE
     }
 
 

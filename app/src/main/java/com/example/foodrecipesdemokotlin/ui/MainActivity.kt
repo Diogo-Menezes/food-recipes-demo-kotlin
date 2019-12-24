@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.foodrecipesdemokotlin.BaseActivity
 import com.example.foodrecipesdemokotlin.R
+import com.example.foodrecipesdemokotlin.ui.category.CategoryListFragment
 import com.example.foodrecipesdemokotlin.ui.recipe_list.RecipeListFragment
 
 class MainActivity : BaseActivity() {
@@ -19,7 +20,7 @@ class MainActivity : BaseActivity() {
 
     private fun addFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.nav_host, RecipeListFragment.newInstance())
+            .replace(R.id.nav_host, CategoryListFragment.newInstance())
             .commitNow()
     }
 }
