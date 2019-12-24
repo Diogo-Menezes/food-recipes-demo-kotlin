@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.foodrecipesdemokotlin.FADE_DURATION
 import com.example.foodrecipesdemokotlin.domain.RecipeList
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.asDomainModel
@@ -23,8 +24,7 @@ class RecipeListViewModel(application: Application) : BaseViewModel(application)
         get() = _recipeList
 
     init {
-        //test
-        getRecipeList("chicken", "1")
+        _recipeList.value = ArrayList()
     }
 
     private fun getRecipeList(query: String, page: String) {
@@ -34,9 +34,10 @@ class RecipeListViewModel(application: Application) : BaseViewModel(application)
                 repository.getRecipeList(query = query, page = page)
             try {
                 setStatus(Status.LOADING)
-                delay(2000L)
+                delay(FADE_DURATION)
                 val listResult = getDeferredRecipes.await()
-                setStatus(Status.DONE)
+                Log.i("RecipeListViewModel", "getRecipeList: ${listResult.count}")
+                if (listResult.count == 0) setStatus(Status.NO_RESULTS) else setStatus(Status.DONE)
                 _recipeList.value = listResult.asDomainModel()
             } catch (e: Exception) {
                 Log.i("RecipeListViewModel", "getRecipeList: ${e.message}")

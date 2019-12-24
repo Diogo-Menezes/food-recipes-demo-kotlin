@@ -7,22 +7,26 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.example.foodrecipesdemokotlin.BaseActivity
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.ui.recipe_list.RecipeListFragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.loading_layout.*
+import kotlinx.android.synthetic.main.loading_layout.load_layout
 
 class MainActivity : BaseActivity() {
 
     private lateinit var mSearchView: androidx.appcompat.widget.SearchView
     private lateinit var fragment: Fragment
+    private lateinit var navController: NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        fragment = RecipeListFragment.newInstance()
-        addFragment(fragment)
+        navController = findNavController(R.id.fragment)
     }
 
     private fun initSearchView(searchView: androidx.appcompat.widget.SearchView) {
@@ -34,7 +38,6 @@ class MainActivity : BaseActivity() {
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 setSearch(query, searchView)
-
                 return true
             }
 
@@ -45,17 +48,15 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setSearch(query: String?, view: View) {
-        loading_text.text = query ?: getString(R.string.loading_text)
+        val text = query?.capitalize()
+        loading_text.text = text ?: getString(R.string.loading_text)
+        // TODO("24/12/2019 - temporary to test purposes")
         (fragment as RecipeListFragment).searchQuery(query!!)
         closeKeyboard(view)
-        this.title = query
+        supportActionBar?.collapseActionView()
+        this.title = text
     }
 
-    private fun addFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.nav_host, fragment)
-            .commit()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.search_menu, menu)
@@ -70,6 +71,18 @@ class MainActivity : BaseActivity() {
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    override fun loadingText(string: String) {
+        loading_text.text = string
+    }
+
     // TODO("24/12/2019 - enable search")
+
+    override fun onBackPressed() {
+        if (load_layout.visibility == View.VISIBLE) {
+            load_layout.visibility = View.INVISIBLE
+            frame_layout.visibility = View.VISIBLE
+        }
+        super.onBackPressed()
+    }
 
 }

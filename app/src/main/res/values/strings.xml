@@ -11,4 +11,6 @@
     <string name="publisher">Publisher</string>
     <string name="ingredients_bullet">- %s</string>
     <string name="searching_text">Searching</string>
+    <string name="no_results">No results</string>
+    <string name="no_more_results">No more results…</string>
 </resources>

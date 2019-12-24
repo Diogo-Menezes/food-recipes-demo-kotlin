@@ -10,6 +10,7 @@ import kotlinx.coroutines.Job
 
 
 enum class Status() {
+    NO_RESULTS,
     LOADING,
     ERROR,
     DONE,
@@ -18,17 +19,12 @@ enum class Status() {
 
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
-    protected var viewModelJob = Job()
+    private var viewModelJob = Job()
     protected val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
-    protected val _status = MutableLiveData<Status>()
+    private val _status = MutableLiveData<Status>()
     val status: LiveData<Status>
         get() = _status
-
-    init {
-        _status.value = Status.NONE
-    }
-
 
     protected fun setStatus(status: Status) {
         _status.value = status

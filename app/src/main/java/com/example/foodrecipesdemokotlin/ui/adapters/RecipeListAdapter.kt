@@ -7,14 +7,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.request.RequestOptions
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.RecipeList
 import kotlinx.android.synthetic.main.fragment_recipe_detail.view.*
+import kotlinx.android.synthetic.main.layout_search_exhausted.view.*
 import kotlin.math.roundToInt
 
-class RecipeListAdapter : RecyclerView.Adapter<RecipeListAdapter.RecipeViewHolder>() {
+private const val NO_RESULTS_TYPE = 0
+private const val RESULTS_TYPE = 1
+
+class RecipeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var data = listOf<RecipeList>()
         set(value) {
@@ -22,15 +24,35 @@ class RecipeListAdapter : RecyclerView.Adapter<RecipeListAdapter.RecipeViewHolde
             notifyDataSetChanged()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        return RecipeViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            RESULTS_TYPE -> RecipeViewHolder.from(parent)
+            NO_RESULTS_TYPE -> NoResultsViewHolder.from(parent)
+            else -> NoResultsViewHolder.from(parent)
+        }
+
     }
 
     override fun getItemCount() = data.size
 
-    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val recipe = data[position]
-        holder.bind(recipe)
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val itemViewType = getItemViewType(position)
+        if (itemViewType == RESULTS_TYPE) {
+            val recipe = data[position]
+            (holder as RecipeViewHolder).bind(recipe)
+        } else {
+            (holder as NoResultsViewHolder).bind()
+        }
+
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (data[position].title.isNotEmpty()) {
+            RESULTS_TYPE
+        } else {
+            NO_RESULTS_TYPE
+        }
     }
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -55,6 +77,24 @@ class RecipeListAdapter : RecyclerView.Adapter<RecipeListAdapter.RecipeViewHolde
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view =
                     layoutInflater.inflate(R.layout.layout_recipe_list_item, parent, false)
+                return RecipeViewHolder(view)
+            }
+        }
+    }
+
+
+    class NoResultsViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
+        private val textView: TextView = itemView.no_results_text
+        fun bind() {
+            textView.text = itemView.resources.getString(R.string.no_results)
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): RecipeViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val view =
+                    layoutInflater.inflate(R.layout.layout_search_exhausted, parent, false)
                 return RecipeViewHolder(view)
             }
         }

@@ -9,4 +9,6 @@ interface StatusListener {
 
     fun closeKeyboard(view: View)
 
+    fun loadingText(string: String);
+
 }

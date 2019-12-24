@@ -45,6 +45,8 @@ class RecipeListFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initRecyclerList()
+        val args = RecipeListFragmentArgs.fromBundle(arguments!!)
+        searchQuery(args.query)
     }
 
     private fun initRecyclerList() {

@@ -10,14 +10,26 @@
 
     <include
         android:id="@+id/load_layout"
-        layout="@layout/loading_layout"
-        />
+        layout="@layout/loading_layout" />
 
-    <FrameLayout
-        android:id="@+id/nav_host"
+    <LinearLayout
+        android:id="@+id/frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <fragment
+            android:id="@+id/fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/main_navigation" />
+    </LinearLayout>
     <!--    <com.google.android.material.navigation.NavigationView-->
     <!--        android:id="@+id/nav_host"-->
     <!--        android:layout_width="0dp"-->

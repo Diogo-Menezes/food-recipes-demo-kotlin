@@ -12,7 +12,9 @@ import com.example.foodrecipesdemokotlin.util.Konstant
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.layout_category_list_item.view.*
 
-class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.CategoryViewHolder>() {
+class CategoryAdapter(val onCategoryClick: OnCategoryClick) :
+    RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
     var data = listOf<String>()
         set(value) {
             field = value
@@ -25,7 +27,7 @@ class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.CategoryViewHolder>() {
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val item = data[position]
-        holder.bind(item, position)
+        holder.bind(onCategoryClick, item, position)
     }
 
     override fun getItemCount() = data.size
@@ -37,8 +39,10 @@ class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.CategoryViewHolder>() {
         private val imageView: CircleImageView = itemView.category_image
         private val category: TextView = itemView.category_title
 
-        fun bind(item: String, position: Int) {
+        fun bind(categoryClick: OnCategoryClick, item: String, position: Int) {
+
             category.text = item
+            itemView.setOnClickListener { categoryClick.onClick(item) }
             val image = Konstant.DEFAULT_SEARCH_CATEGORY_IMAGES[position]
             val path =
                 Uri.parse("android.resource://com.diogomenezes.recipesdemo/drawable/${image}")
@@ -55,7 +59,10 @@ class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.CategoryViewHolder>() {
                 return CategoryViewHolder(view)
             }
         }
+
     }
+}
 
-
+class OnCategoryClick(val clickListener: (category: String) -> Unit) {
+    fun onClick(string: String) = clickListener(string)
 }
