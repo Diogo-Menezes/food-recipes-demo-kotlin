@@ -6,14 +6,21 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
+import com.bumptech.glide.request.RequestOptions
 import com.example.foodrecipesdemokotlin.R
-import com.example.foodrecipesdemokotlin.domain.Recipe
+import com.example.foodrecipesdemokotlin.domain.RecipeList
 import kotlinx.android.synthetic.main.fragment_recipe_detail.view.*
 import kotlin.math.roundToInt
 
 class RecipeListAdapter : RecyclerView.Adapter<RecipeListAdapter.RecipeViewHolder>() {
 
-    val data = listOf<Recipe>()
+    var data = listOf<RecipeList>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         return RecipeViewHolder.from(parent)
@@ -22,8 +29,8 @@ class RecipeListAdapter : RecyclerView.Adapter<RecipeListAdapter.RecipeViewHolde
     override fun getItemCount() = data.size
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val item = data[position]
-        holder.bind(item)
+        val recipe = data[position]
+        holder.bind(recipe)
     }
 
     class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,11 +40,14 @@ class RecipeListAdapter : RecyclerView.Adapter<RecipeListAdapter.RecipeViewHolde
         private val publisher: TextView = itemView.recipe_list_publisher
         private val socialScore: TextView = itemView.recipe_list_social_score
 
-        fun bind(item: Recipe) {
+        fun bind(recipe: RecipeList) {
+            title.text = recipe.title
+            publisher.text = recipe.publisher
+            socialScore.text = recipe.socialRank.roundToInt().toString()
 
-            title.text = item.title
-            publisher.text = item.publisher
-            socialScore.text = item.socialRank.roundToInt().toString()
+            Glide.with(image.context)
+                .load(recipe.imageUrl)
+                .into(image)
         }
 
         companion object {

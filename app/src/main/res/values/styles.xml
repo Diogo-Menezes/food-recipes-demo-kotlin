@@ -15,4 +15,9 @@
         <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.ActionBar</item>
     </style>
 
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

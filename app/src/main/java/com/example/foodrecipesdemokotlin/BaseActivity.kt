@@ -6,11 +6,10 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.foodrecipesdemokotlin.viewmodels.Status
 import com.example.foodrecipesdemokotlin.ui.StatusListener
+import com.example.foodrecipesdemokotlin.viewmodels.Status
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.loading_layout.load_layout
 
 private const val FADE_DURATION = 1000L
 
@@ -23,7 +22,7 @@ abstract class BaseActivity : AppCompatActivity(),
         animator.duration = FADE_DURATION
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
-                view.visibility = View.GONE
+                view.visibility = View.INVISIBLE
             }
         })
         animator.start()
@@ -44,8 +43,8 @@ abstract class BaseActivity : AppCompatActivity(),
         when (status) {
             Status.NONE -> return
             Status.LOADING -> showProgress(true)
-            Status.ERROR -> showError() //// TODO("24/12/2019 - add message")
-            Status.DONE -> showProgress(false)
+            Status.ERROR -> showError() // TODO("24/12/2019 - add message")
+            Status.DONE -> showProgress(true)
         }
     }
 
@@ -53,7 +52,7 @@ abstract class BaseActivity : AppCompatActivity(),
         Snackbar.make(main_layout, message, Snackbar.LENGTH_SHORT).show()
     }
 
-    private fun showError(message: String="Error") {
+    private fun showError(message: String = "Error") {
         applicationContext.makeSnack(message)
     }
 

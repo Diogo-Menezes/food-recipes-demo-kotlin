@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.appcompat.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"
+    app:layout_scrollFlags="scroll|enterAlways"
+    app:title="@string/app_name"
+    android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+    tools:showIn="@layout/fragment_recipe_list" />

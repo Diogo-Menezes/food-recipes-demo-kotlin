@@ -11,6 +11,7 @@ import com.example.foodrecipesdemokotlin.repository.RecipeRepository
 import com.example.foodrecipesdemokotlin.viewmodels.BaseViewModel
 import com.example.foodrecipesdemokotlin.viewmodels.Status
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RecipeListViewModel(application: Application) : BaseViewModel(application) {
@@ -23,15 +24,17 @@ class RecipeListViewModel(application: Application) : BaseViewModel(application)
 
     init {
         //test
-//        getRecipeList("chicken", "1")
+        getRecipeList("chicken", "1")
     }
 
     private fun getRecipeList(query: String, page: String) {
+        Log.i("RecipeListViewModel", "getRecipeList: called $query")
         coroutineScope.launch {
             val getDeferredRecipes: Deferred<NetworkRecipesContainer> =
                 repository.getRecipeList(query = query, page = page)
             try {
                 setStatus(Status.LOADING)
+                delay(5000L)
                 val listResult = getDeferredRecipes.await()
                 setStatus(Status.DONE)
                 _recipeList.value = listResult.asDomainModel()
@@ -42,5 +45,10 @@ class RecipeListViewModel(application: Application) : BaseViewModel(application)
                 _recipeList.value = ArrayList()
             }
         }
+    }
+
+    fun searchRecipes(query: String, page: String) {
+        getRecipeList(query, page)
+        Log.i("RecipeListViewModel", "searchRecipes: called")
     }
 }

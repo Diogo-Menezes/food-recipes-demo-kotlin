@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.ui.adapters.RecipeAdapter
 import com.example.foodrecipesdemokotlin.util.Konstant
@@ -17,6 +18,10 @@ import kotlinx.android.synthetic.main.fragment_category_list.*
 class CategoryListFragment : Fragment() {
 
     private val adapter = RecipeAdapter()
+
+    private val viewModel: CategoryViewModel by lazy {
+        ViewModelProviders.of(this).get(CategoryViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,4 +40,6 @@ class CategoryListFragment : Fragment() {
     companion object {
         fun newInstance() = CategoryListFragment()
     }
+
+
 }
