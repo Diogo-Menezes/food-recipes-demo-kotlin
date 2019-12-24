@@ -45,7 +45,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setSearch(query: String?, view: View) {
-        makeSnack(query ?: "text")
         loading_text.text = query ?: getString(R.string.loading_text)
         (fragment as RecipeListFragment).searchQuery(query!!)
         closeKeyboard(view)
@@ -63,7 +62,6 @@ class MainActivity : BaseActivity() {
         mSearchView =
             menu?.findItem(R.id.app_bar_search)?.actionView as androidx.appcompat.widget.SearchView
         initSearchView(mSearchView);
-
         return true
     }
 

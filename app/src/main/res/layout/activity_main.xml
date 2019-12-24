@@ -11,7 +11,7 @@
     <include
         android:id="@+id/load_layout"
         layout="@layout/loading_layout"
-        android:visibility="visible"/>
+        />
 
     <FrameLayout
         android:id="@+id/nav_host"

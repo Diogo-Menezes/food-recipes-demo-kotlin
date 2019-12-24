@@ -34,7 +34,7 @@ class RecipeListViewModel(application: Application) : BaseViewModel(application)
                 repository.getRecipeList(query = query, page = page)
             try {
                 setStatus(Status.LOADING)
-                delay(5000L)
+                delay(2000L)
                 val listResult = getDeferredRecipes.await()
                 setStatus(Status.DONE)
                 _recipeList.value = listResult.asDomainModel()

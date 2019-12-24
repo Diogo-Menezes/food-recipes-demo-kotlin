@@ -18,7 +18,8 @@ abstract class BaseActivity : AppCompatActivity(),
 
 
     private fun animateToGone(view: View) {
-        val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 0f)
+        view.bringToFront()
+        val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0f)
         animator.duration = FADE_DURATION
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
@@ -29,6 +30,7 @@ abstract class BaseActivity : AppCompatActivity(),
     }
 
     private fun animateToVisible(view: View) {
+        view.bringToFront()
         val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
         animator.duration = FADE_DURATION
         animator.addListener(object : AnimatorListenerAdapter() {
@@ -44,7 +46,7 @@ abstract class BaseActivity : AppCompatActivity(),
             Status.NONE -> return
             Status.LOADING -> showProgress(true)
             Status.ERROR -> showError() // TODO("24/12/2019 - add message")
-            Status.DONE -> showProgress(true)
+            Status.DONE -> showProgress(false)
         }
     }
 
@@ -56,10 +58,16 @@ abstract class BaseActivity : AppCompatActivity(),
         applicationContext.makeSnack(message)
     }
 
-    protected fun showProgress(show: Boolean) {
+    private fun showProgress(show: Boolean) {
         when (show) {
-            true -> animateToVisible(load_layout)
-            false -> animateToGone(load_layout)
+            true -> {
+                animateToVisible(load_layout)
+                animateToGone(nav_host)
+            }
+            false -> {
+                animateToGone(load_layout)
+                animateToVisible(nav_host)
+            }
         }
     }
 }
