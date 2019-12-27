@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodrecipesdemokotlin.R
+import com.example.foodrecipesdemokotlin.domain.Category
 import com.example.foodrecipesdemokotlin.util.Konstant
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.layout_category_list_item.view.*
@@ -15,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_category_list_item.view.*
 class CategoryAdapter(val onCategoryClick: OnCategoryClick) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    var data = listOf<String>()
+    var data = listOf<Category>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -27,7 +28,7 @@ class CategoryAdapter(val onCategoryClick: OnCategoryClick) :
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val item = data[position]
-        holder.bind(onCategoryClick, item, position)
+        holder.bind(onCategoryClick, item)
     }
 
     override fun getItemCount() = data.size
@@ -39,17 +40,16 @@ class CategoryAdapter(val onCategoryClick: OnCategoryClick) :
         private val imageView: CircleImageView = itemView.category_image
         private val category: TextView = itemView.category_title
 
-        fun bind(categoryClick: OnCategoryClick, item: String, position: Int) {
-
-            category.text = item
+        fun bind(categoryClick: OnCategoryClick, item: Category) {
+            category.text = item.categoryName
+            imageView.apply {
+                Glide
+                    .with(this)
+                    .load(item.imageUrl)
+                    .into(this)
+            }
             itemView.setOnClickListener { categoryClick.onClick(item) }
-            val image = Konstant.DEFAULT_SEARCH_CATEGORY_IMAGES[position]
-            val path =
-                Uri.parse("android.resource://com.diogomenezes.recipesdemo/drawable/${image}")
-            Glide
-                .with(itemView)
-                .load(path)
-                .into(imageView)
+
         }
 
         companion object {
@@ -63,6 +63,6 @@ class CategoryAdapter(val onCategoryClick: OnCategoryClick) :
     }
 }
 
-class OnCategoryClick(val clickListener: (category: String) -> Unit) {
-    fun onClick(string: String) = clickListener(string)
+class OnCategoryClick(val clickListener: (string: String) -> Unit) {
+    fun onClick(category: Category) = clickListener(category.categoryName)
 }

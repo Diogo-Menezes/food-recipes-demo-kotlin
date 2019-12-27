@@ -9,10 +9,13 @@
         android:id="@+id/recipeDetailsFragment"
         android:name="com.example.foodrecipesdemokotlin.ui.recipe_detail.RecipeDetailsFragment"
         android:label="Recipe Detail">
-        <argument android:name="recipe" />
         <action
             android:id="@+id/action_recipeDetailsFragment_to_recipeListFragment"
             app:destination="@id/recipeListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@+id/recipeListFragment" />
     </fragment>
     <fragment
@@ -21,19 +24,24 @@
         android:label="Recipes List">
         <action
             android:id="@+id/action_recipeListFragment_to_recipeDetailsFragment"
-            app:destination="@id/recipeDetailsFragment" />
-        <argument
-            android:name="query"
-            app:argType="string" />
+            app:destination="@id/recipeDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/categoryListFragment"
-        android:name="com.example.foodrecipesdemokotlin.ui.category.CategoryListFragment"
+        android:name="com.example.foodrecipesdemokotlin.ui.category.CategoryFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_blank">
         <action
             android:id="@+id/action_categoryListFragment_to_recipeListFragment"
-            app:destination="@id/recipeListFragment" />
+            app:destination="@id/recipeListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <activity
         android:id="@+id/mainActivity"

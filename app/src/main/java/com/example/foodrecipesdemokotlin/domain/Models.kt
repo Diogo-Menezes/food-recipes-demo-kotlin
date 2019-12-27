@@ -10,8 +10,14 @@ data class Recipe(
 )
 
 data class RecipeList(
+    val id: String,
     val title: String,
     val publisher: String,
     val socialRank: Float,
     val imageUrl: String
+)
+
+data class Category(
+    val categoryName: String,
+    val imageUrl: Int
 )

@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.RecipeList
-import kotlinx.android.synthetic.main.fragment_recipe_detail.view.*
+import kotlinx.android.synthetic.main.layout_recipe_list_item.view.*
 import kotlinx.android.synthetic.main.layout_search_exhausted.view.*
 import kotlin.math.roundToInt
 
 private const val NO_RESULTS_TYPE = 0
 private const val RESULTS_TYPE = 1
 
-class RecipeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecipeListAdapter(val recipeClick: OnRecipeClick) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var data = listOf<RecipeList>()
         set(value) {
@@ -40,7 +41,7 @@ class RecipeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val itemViewType = getItemViewType(position)
         if (itemViewType == RESULTS_TYPE) {
             val recipe = data[position]
-            (holder as RecipeViewHolder).bind(recipe)
+            (holder as RecipeViewHolder).bind(recipeClick, recipe)
         } else {
             (holder as NoResultsViewHolder).bind()
         }
@@ -62,7 +63,8 @@ class RecipeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val publisher: TextView = itemView.recipe_list_publisher
         private val socialScore: TextView = itemView.recipe_list_social_score
 
-        fun bind(recipe: RecipeList) {
+        fun bind(recipeClick: OnRecipeClick, recipe: RecipeList) {
+            itemView.setOnClickListener { recipeClick.onClick(recipe) }
             title.text = recipe.title
             publisher.text = recipe.publisher
             socialScore.text = recipe.socialRank.roundToInt().toString()
@@ -100,3 +102,8 @@ class RecipeListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 }
+
+class OnRecipeClick(val clickListener: (id: String) -> Unit) {
+    fun onClick(recipe: RecipeList) = clickListener(recipe.id)
+}
+

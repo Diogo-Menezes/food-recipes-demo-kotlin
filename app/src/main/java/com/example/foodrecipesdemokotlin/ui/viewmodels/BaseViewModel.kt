@@ -1,4 +1,4 @@
-package com.example.foodrecipesdemokotlin.viewmodels
+package com.example.foodrecipesdemokotlin.ui.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -18,6 +18,17 @@ enum class Status() {
 }
 
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
+
+    protected val _query = MutableLiveData<String>()
+    val query: LiveData<String>
+        get() = _query
+
+    protected val _searchView = MutableLiveData<String>()
+    val searchView: LiveData<String>
+        get() = _searchView
+
+    protected val _pageNumber = MutableLiveData<String>()
+
 
     private var viewModelJob = Job()
     protected val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)

@@ -20,6 +20,8 @@
         android:textAlignment="center"
         android:text="@string/loading_text"
         android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/primaryLightColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

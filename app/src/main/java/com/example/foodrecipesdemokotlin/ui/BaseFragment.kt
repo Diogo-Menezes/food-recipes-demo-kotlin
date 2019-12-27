@@ -6,21 +6,23 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.example.foodrecipesdemokotlin.ui.recipe_list.RecipeListViewModel
+import com.example.foodrecipesdemokotlin.ui.viewmodels.SharedViewModel
 
 /**
  * A simple [Fragment] subclass.
  */
-open class BaseFragment : Fragment() {
+abstract class BaseFragment : Fragment() {
     lateinit var statusListener: StatusListener
+    lateinit var viewModel: SharedViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.run {
+            viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
+        }
     }
 
-    companion object {
-        fun newInstance() = BaseFragment()
-    }
 
     override fun onAttach(context: Context) {
         Log.i("BaseFragment", "onAttach: called")
@@ -32,7 +34,7 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    open fun searchQuery(query: String) {
-        Log.i("BaseFragment", "searchQuery: $query")
+    open fun searchQuery(query: String, page: String = "1") {
+        viewModel.searchRecipes(query, page)
     }
 }

@@ -15,7 +15,7 @@
 
 
         <TextView
-            android:id="@+id/recipe_list_title"
+            android:id="@+id/recipe_detail_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -27,7 +27,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recipe_list_image"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_detail_image"
             tools:text="Recipe Title" />
 
         <TextView
@@ -43,10 +43,10 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/social_score_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recipe_list_title" />
+            app:layout_constraintTop_toBottomOf="@+id/recipe_detail_title" />
 
         <TextView
-            android:id="@+id/recipe_list_publisher"
+            android:id="@+id/recipe_detail_publisher"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -68,12 +68,12 @@
             android:textColor="@color/primaryDarkColor"
             android:textSize="@dimen/recipe_publisher_text_size"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/recipe_list_publisher"
+            app:layout_constraintEnd_toEndOf="@+id/recipe_detail_publisher"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recipe_list_publisher" />
+            app:layout_constraintTop_toBottomOf="@+id/recipe_detail_publisher" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/recipe_list_image"
+            android:id="@+id/recipe_detail_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/recipe_image_height"
             android:scaleType="centerCrop"
@@ -112,7 +112,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/recipe_list_social_score"
+                    android:id="@+id/recipe_detail_social_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/recipe_score_label"

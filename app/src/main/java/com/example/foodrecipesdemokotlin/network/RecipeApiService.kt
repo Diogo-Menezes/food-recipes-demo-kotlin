@@ -24,7 +24,7 @@ interface RecipeApiService {
     fun getRecipeAsync(
         @Query("key") key: String = "",
         @Query("rId") recipeId: String
-    ): Deferred<NetworkRecipe>
+    ): Deferred<NetworkRecipeContainer>
 }
 
 private val moshi = Moshi.Builder()

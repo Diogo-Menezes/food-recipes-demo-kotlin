@@ -1,11 +1,14 @@
 package com.example.foodrecipesdemokotlin.ui
 
 import android.view.View
-import com.example.foodrecipesdemokotlin.viewmodels.Status
+import com.example.foodrecipesdemokotlin.ui.viewmodels.Status
 
 
 interface StatusListener {
-    fun setStatus(status: Status)
+
+//    fun showFragmentLayout(show: Boolean);
+//
+//    fun setStatus(status: Status)
 
     fun closeKeyboard(view: View)
 

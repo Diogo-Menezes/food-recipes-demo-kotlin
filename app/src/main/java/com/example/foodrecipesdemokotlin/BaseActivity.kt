@@ -5,46 +5,81 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.View
+import android.view.View.VISIBLE
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodrecipesdemokotlin.ui.StatusListener
-import com.example.foodrecipesdemokotlin.viewmodels.Status
+import com.example.foodrecipesdemokotlin.ui.viewmodels.Status
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.load_layout
+import kotlinx.android.synthetic.main.loading_layout.*
 
-const val FADE_DURATION = 1000L
+const val FADE_DURATION = 500L
+const val ALPHA_VISIBLE = 1f
+const val ALPHA_INVISIBLE = 0f
 
 abstract class BaseActivity : AppCompatActivity(),
     StatusListener {
 
+    private lateinit var animator: ObjectAnimator
+
+//    private fun animateVisibility(view: View, alpha: Float) {
+//        view.bringToFront()
+//        view.visibility = VISIBLE
+//        val animatorFadeIn = ObjectAnimator
+//            .ofFloat(view, View.ALPHA, alpha)
+//            .apply {
+//                duration = FADE_DURATION
+//                addListener(object : AnimatorListenerAdapter() {
+//                    override fun onAnimationCancel(animation: Animator?) {
+//                        view.alpha = alpha
+//                    }
+//
+//                    override fun onAnimationEnd(animation: Animator?) {
+//                        view.alpha = alpha
+//                    }
+//                })
+//                start()
+//            }
+//    }
 
     private fun animateToInvisible(view: View) {
-        view.visibility = View.VISIBLE
         view.bringToFront()
-        val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0f)
-        animator.duration = FADE_DURATION
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                view.visibility = View.INVISIBLE
-                if (frame_layout.visibility != View.VISIBLE) animateToVisible(frame_layout)
+        view.visibility = VISIBLE
+        val animatorFadeIn = ObjectAnimator
+            .ofFloat(view, View.ALPHA, ALPHA_INVISIBLE)
+            .apply {
+                duration = FADE_DURATION
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationCancel(animation: Animator?) {
+                        view.alpha = ALPHA_INVISIBLE
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        view.alpha = ALPHA_INVISIBLE
+                    }
+                })
+                start()
             }
-        })
-        animator.start()
     }
 
     private fun animateToVisible(view: View) {
-        view.visibility = View.INVISIBLE
         view.bringToFront()
-        val animator = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
-        animator.duration = FADE_DURATION
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) {
-                view.visibility = View.VISIBLE
+        view.visibility = VISIBLE
+        val animatorFadeOut = ObjectAnimator
+            .ofFloat(view, View.ALPHA, ALPHA_VISIBLE).apply {
+                duration = FADE_DURATION
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator?) {
+                        view.alpha = ALPHA_VISIBLE
+                    }
+                })
+                start()
             }
-        })
-        animator.start()
     }
 
-    override fun setStatus(status: Status) {
+    protected fun onStatusChange(status: Status) {
         when (status) {
             Status.NONE -> return
             Status.LOADING -> showProgress(true)
@@ -72,7 +107,22 @@ abstract class BaseActivity : AppCompatActivity(),
             }
             false -> {
                 animateToInvisible(load_layout)
+                animateToVisible(frame_layout)
             }
         }
     }
+
+    protected fun showNavHostLayout(show: Boolean) =
+        if (show) animateToVisible(frame_layout) else animateToInvisible(frame_layout)
+
+    override fun closeKeyboard(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    override fun loadingText(string: String) {
+        loading_text.text = string
+    }
+
+
 }
