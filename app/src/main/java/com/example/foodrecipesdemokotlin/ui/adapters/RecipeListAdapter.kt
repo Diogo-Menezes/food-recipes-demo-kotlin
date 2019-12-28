@@ -105,6 +105,6 @@ class RecipeListAdapter(val recipeClick: OnRecipeClick) :
 }
 
 class OnRecipeClick(val clickListener: (id: String) -> Unit) {
-    fun onClick(recipe: RecipeList) = clickListener(recipe.id)
+    fun onClick(recipe: RecipeList) = clickListener(recipe.recipeId)
 }
 

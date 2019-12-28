@@ -10,7 +10,7 @@ data class Recipe(
 )
 
 data class RecipeList(
-    val id: String,
+    val recipeId: String,
     val title: String,
     val publisher: String,
     val socialRank: Float,

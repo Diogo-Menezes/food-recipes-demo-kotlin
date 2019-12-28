@@ -1,9 +1,11 @@
 package com.example.foodrecipesdemokotlin.database
 
+import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.foodrecipesdemokotlin.domain.Recipe
+import com.example.foodrecipesdemokotlin.domain.RecipeList
 
 
 @Entity(tableName = "recipes")
@@ -24,16 +26,15 @@ data class DataBaseRecipe constructor(
     val social_rank: Float,
 
     @ColumnInfo(name = "ingredients")
-    val ingredients: Array<String>? = arrayOf(""),
+    val ingredients: Array<String>?= arrayOf(),
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Int
 )
 
-fun List<DataBaseRecipe>.asDomainModel(): List<Recipe> {
+fun List<DataBaseRecipe>.asDomainModel(): List<RecipeList> {
     return map {
-        Recipe(
-            ingredients = it.ingredients,
+        RecipeList(
             imageUrl = it.image_url,
             socialRank = it.social_rank,
             publisher = it.publisher,
@@ -41,4 +42,15 @@ fun List<DataBaseRecipe>.asDomainModel(): List<Recipe> {
             title = it.title
         )
     }
+}
+
+fun DataBaseRecipe.asDomainModel(): Recipe {
+    return Recipe(
+        ingredients = ingredients,
+        imageUrl = image_url,
+        socialRank = social_rank,
+        publisher = publisher,
+        recipeId = recipe_id,
+        title = title
+    )
 }

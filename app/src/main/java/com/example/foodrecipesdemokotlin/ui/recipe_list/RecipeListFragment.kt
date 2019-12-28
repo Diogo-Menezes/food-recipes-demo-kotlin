@@ -37,11 +37,13 @@ class RecipeListFragment : BaseFragment() {
     }
 
     private fun initRecyclerList() {
-        adapter = RecipeListAdapter(OnRecipeClick {
-            Log.i("RecipeListFragment", "initRecyclerList: $it")
-            setRecipeId(it)
+        adapter = RecipeListAdapter(OnRecipeClick { recipeId ->
+            Log.i("RecipeListFragment", "initRecyclerList: $recipeId")
+            setRecipeId(recipeId)
+            viewModel.loadRecipe(recipeId)
         })
         recipe_list.adapter = adapter
+
     }
 
     private fun setRecipeId(recipeId: String) {
@@ -55,7 +57,6 @@ class RecipeListFragment : BaseFragment() {
         })
         viewModel.recipeList.observe(viewLifecycleOwner, Observer { recipeList ->
             adapter.data = recipeList
-            viewModel.loadFromCache("chicken")
         })
     }
 }

@@ -12,10 +12,18 @@ import kotlinx.coroutines.withContext
 
 class RecipeRepository(private val database: RecipesDatabase) {
 
+    private val recipeDao = database.recipeDao
+
     suspend fun getRecipeList(query: String, page: String): NetworkRecipesContainer {
         val list = RecipeApi.retrofitService.searchRecipes(query = query, page = page)
         insertRecipeList(list.asDatabaseModel())
         return list
+    }
+
+    suspend fun getRecipe(recipeId: String): NetworkRecipeContainer {
+        val recipe = RecipeApi.retrofitService.getRecipe(recipeId = recipeId)
+        insertRecipe(recipe.networkRecipe.asDatabaseModel())
+        return recipe
     }
 
     private suspend fun insertRecipeList(list: Array<DataBaseRecipe>) {
@@ -26,18 +34,20 @@ class RecipeRepository(private val database: RecipesDatabase) {
 
     private suspend fun insertRecipe(recipe: DataBaseRecipe) {
         withContext(Dispatchers.IO) {
-            database.recipeDao.insertRecipes(recipe)
+            database.recipeDao.insertRecipe(recipe)
         }
     }
 
     fun loadFromCache(query: String, page: String = "1"): LiveData<List<DataBaseRecipe>> {
-        return database.recipeDao.getRecipes(query, page.toInt())
+        return recipeDao.getRecipes(query, page.toInt())
     }
 
-    suspend fun getRecipe(recipeId: String): NetworkRecipeContainer {
-        val recipe = RecipeApi.retrofitService.getRecipe(recipeId = recipeId)
-        insertRecipe(recipe.networkRecipe.asDatabaseModel())
-        return recipe
+    fun getAllRecipes(): LiveData<List<DataBaseRecipe>> {
+        return recipeDao.getAllRecipes()
+    }
+
+    fun loadRecipeFromCache(recipeId: String): LiveData<DataBaseRecipe> {
+        return recipeDao.getRecipe(recipeId)
     }
 
 }

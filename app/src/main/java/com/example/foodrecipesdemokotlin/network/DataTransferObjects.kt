@@ -71,7 +71,7 @@ data class NetworkRecipe(
 fun NetworkRecipesContainer.asDomainModel(): List<RecipeList> {
     return recipes.map {
         RecipeList(
-            id = it.recipeId,
+            recipeId = it.recipeId,
             imageUrl = it.imageUrl,
             socialRank = it.socialRank,
             publisher = it.publisher,

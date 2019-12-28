@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.Category
 import com.example.foodrecipesdemokotlin.ui.BaseFragment
@@ -25,10 +24,6 @@ import kotlinx.android.synthetic.main.fragment_category_list.*
 class CategoryFragment : BaseFragment() {
 
     private lateinit var adapter: CategoryAdapter
-
-//    private val viewModel: CategoryViewModel by lazy {
-//        ViewModelProviders.of(this).get(CategoryViewModel::class.java)
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

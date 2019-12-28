@@ -4,9 +4,9 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.foodrecipesdemokotlin.FADE_DURATION
+import com.example.foodrecipesdemokotlin.database.DataBaseRecipe
 import com.example.foodrecipesdemokotlin.database.getDatabase
 import com.example.foodrecipesdemokotlin.domain.Recipe
 import com.example.foodrecipesdemokotlin.domain.RecipeList
@@ -14,7 +14,6 @@ import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.asDomainModel
 import com.example.foodrecipesdemokotlin.repository.RecipeRepository
 import com.example.foodrecipesdemokotlin.util.Konstant
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -133,7 +132,15 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         getRecipe(recipeId)
     }
 
-    fun loadFromCache(query: String, page: String = "1") {
-        println(repository.loadFromCache(query, page))
+    fun loadCache(query: String, page: String = "1"): LiveData<List<DataBaseRecipe>> {
+        return repository.loadFromCache(query, page)
+    }
+
+    fun getAllRecipes(): LiveData<List<DataBaseRecipe>> {
+        return repository.getAllRecipes()
+    }
+
+    fun loadRecipe(recipeId: String) {
+        Log.i("SharedViewModel", "loadCache: ${repository.loadRecipeFromCache(recipeId).value}")
     }
 }
