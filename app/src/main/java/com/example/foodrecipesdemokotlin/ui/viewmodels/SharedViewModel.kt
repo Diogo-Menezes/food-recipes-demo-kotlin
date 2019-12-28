@@ -11,20 +11,28 @@ import com.example.foodrecipesdemokotlin.domain.RecipeList
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.asDomainModel
 import com.example.foodrecipesdemokotlin.repository.RecipeRepository
+import com.example.foodrecipesdemokotlin.util.Konstant
+import com.example.foodrecipesdemokotlin.database.getDatabase
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : BaseViewModel(application) {
 
-    private val repository = RecipeRepository(application)
+    private val repository = RecipeRepository(getDatabase(application))
 
 
     //Main Activity
     fun searchQuery(searchQuery: String) {
         _searchView.value = searchQuery
+        _recipeList.value = ArrayList()
         searchRecipes(searchQuery)
     }
+
+    fun setTitle(title: String) {
+        _title.value = title
+    }
+
 
     //CATEGORY FRAGMENT
     private
@@ -41,8 +49,8 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         _category.value = null
     }
 
-    //RECIPE LIST FRAGMENT
 
+    //RECIPE LIST FRAGMENT
     private val _recipeList = MutableLiveData<List<RecipeList>>()
     val recipeList: LiveData<List<RecipeList>>
         get() = _recipeList
@@ -53,7 +61,7 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
 
     private fun getRecipeList(query: String, page: String = "1") {
         Log.i("SharedViewModel", "getRecipeList: called \nQuery:$query\nPage: $page")
-        coroutineScope.launch {
+        viewModelScope.launch {
             if (status.value != Status.LOADING) setStatus(Status.LOADING)
             val getDeferredRecipes: Deferred<NetworkRecipesContainer> =
                 repository.getRecipeList(query = query, page = page)
@@ -62,8 +70,14 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
                 delay(FADE_DURATION)
                 val listResult = getDeferredRecipes.await()
                 Log.i("SharedViewModel", "recipe count: ${listResult.count}")
-                if (listResult.count == 0) setStatus(Status.NO_RESULTS) else setStatus(Status.DONE)
-                _recipeList.value = listResult.asDomainModel()
+                if (listResult.count == 0) {
+                    setStatus(Status.NO_RESULTS)
+                    _recipeList.value = listOf(RecipeList("", query, Konstant.NO_RESULTS, 0f, ""))
+                } else {
+                    setStatus(Status.DONE)
+                    _recipeList.value = listResult.asDomainModel()
+                }
+
             } catch (e: Exception) {
                 Log.i("SharedViewModel", "error message: ${e.message}")
                 setStatus(Status.ERROR)
@@ -77,9 +91,10 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         _query.value = query
         _pageNumber.value = page
         getRecipeList(query, page)
+        setTitle(query)
     }
 
-    private fun searchNextPage() {
+    fun searchNextPage() {
         getRecipeList(_query.value!!, _pageNumber.value!!)
     }
 
@@ -92,18 +107,18 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         setStatus(Status.NONE)
     }
 
-    //Recipe Detail
+
+    //Recipe Detail Fragment
     private val _recipe = MutableLiveData<Recipe>()
     val recipe: LiveData<Recipe>
         get() = _recipe
 
 
     private fun getRecipe(recipeId: String) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             val deferredRecipe = repository.getRecipe(recipeId)
             try {
                 val recipe = deferredRecipe.await()
-                Log.i("SharedViewModel", "getRecipe: ${recipe.networkRecipe}")
                 _recipe.value = recipe.networkRecipe.asDomainModel()
 
             } catch (e: Exception) {
@@ -115,5 +130,9 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
 
     fun setRecipeId(recipeId: String) {
         getRecipe(recipeId)
+    }
+
+    fun loadFromCache(query: String, page: String = "1") {
+        println(repository.loadFromCache(query, page))
     }
 }

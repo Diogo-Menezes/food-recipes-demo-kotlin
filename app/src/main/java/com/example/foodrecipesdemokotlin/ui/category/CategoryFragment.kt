@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.Category
 import com.example.foodrecipesdemokotlin.ui.BaseFragment

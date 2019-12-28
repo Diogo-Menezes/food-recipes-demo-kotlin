@@ -5,29 +5,31 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardElevation="8dp">
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="vertical">
 
-        android:padding="15dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/category_image"
-            android:layout_width="@dimen/circular_image_category"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/circular_image_category"
-            tools:src="@drawable/vegan" />
+            android:scaleType="centerCrop"
+            tools:src="@drawable/vegan"/>
 
         <TextView
             android:id="@+id/category_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textColor="?colorOnSurface"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textAlignment="center"
+            android:textColor="@color/secondaryDarkColor"
             android:textSize="@dimen/recipe_title_text_size"
             tools:text="Vegan" />
 

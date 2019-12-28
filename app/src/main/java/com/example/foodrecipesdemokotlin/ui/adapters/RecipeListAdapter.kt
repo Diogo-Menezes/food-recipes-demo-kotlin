@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.RecipeList
+import com.example.foodrecipesdemokotlin.util.Konstant
 import kotlinx.android.synthetic.main.layout_recipe_list_item.view.*
 import kotlinx.android.synthetic.main.layout_search_exhausted.view.*
 import kotlin.math.roundToInt
@@ -43,16 +44,16 @@ class RecipeListAdapter(val recipeClick: OnRecipeClick) :
             val recipe = data[position]
             (holder as RecipeViewHolder).bind(recipeClick, recipe)
         } else {
-            (holder as NoResultsViewHolder).bind()
+            (holder as NoResultsViewHolder).bind(data[position])
         }
 
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (data[position].title.isNotEmpty()) {
-            RESULTS_TYPE
-        } else {
+        return if (data[position].publisher == Konstant.NO_RESULTS) {
             NO_RESULTS_TYPE
+        } else {
+            RESULTS_TYPE
         }
     }
 
@@ -88,16 +89,16 @@ class RecipeListAdapter(val recipeClick: OnRecipeClick) :
     class NoResultsViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         private val textView: TextView = itemView.no_results_text
-        fun bind() {
-            textView.text = itemView.resources.getString(R.string.no_results)
+        fun bind(item: RecipeList) {
+            textView.text = itemView.resources.getString(R.string.no_results, item.title)
         }
 
         companion object {
-            fun from(parent: ViewGroup): RecipeViewHolder {
+            fun from(parent: ViewGroup): NoResultsViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view =
                     layoutInflater.inflate(R.layout.layout_search_exhausted, parent, false)
-                return RecipeViewHolder(view)
+                return NoResultsViewHolder(view)
             }
         }
     }

@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.SearchView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -16,7 +17,6 @@ import com.example.foodrecipesdemokotlin.ui.category.CategoryFragment
 import com.example.foodrecipesdemokotlin.ui.recipe_detail.RecipeDetailsFragment
 import com.example.foodrecipesdemokotlin.ui.recipe_list.RecipeListFragment
 import com.example.foodrecipesdemokotlin.ui.viewmodels.SharedViewModel
-import kotlinx.android.synthetic.main.loading_layout.*
 
 class MainActivity : BaseActivity() {
 
@@ -34,6 +34,8 @@ class MainActivity : BaseActivity() {
         navController = findNavController(R.id.nav_host_fragment)
         subscribeUi()
 
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
     }
 
     private fun subscribeUi() {
@@ -44,7 +46,8 @@ class MainActivity : BaseActivity() {
         viewModel.searchView.observe(this, Observer { searchQuery ->
             search(searchQuery, mSearchView)
         })
-        viewModel.query.observe(this, Observer {
+
+        viewModel.title.observe(this, Observer {
             title = it.capitalize()
             loadingText(it.capitalize())
         })
@@ -114,7 +117,10 @@ class MainActivity : BaseActivity() {
     override fun onBackPressed() {
         if (navController.currentDestination!!.id == R.id.recipeListFragment) {
             viewModel.clearList()
+            navController.navigate(R.id.action_recipeListFragment_to_categoryListFragment)
+        } else {
+            super.onBackPressed()
         }
-        super.onBackPressed()
+
     }
 }

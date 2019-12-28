@@ -24,7 +24,7 @@ data class DataBaseRecipe constructor(
     val social_rank: Float,
 
     @ColumnInfo(name = "ingredients")
-    val ingredients: Array<String>? = null,
+    val ingredients: Array<String>? = arrayOf(""),
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Int

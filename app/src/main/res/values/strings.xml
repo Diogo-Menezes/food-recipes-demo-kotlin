@@ -11,7 +11,7 @@
     <string name="publisher">Publisher</string>
     <string name="ingredients_bullet">- %s</string>
     <string name="searching_text">Searching</string>
-    <string name="no_results">No results</string>
+    <string name="no_results">No results found for %s</string>
     <string name="no_more_results">No more results…</string>
 
     <!--    Categories-->
@@ -24,5 +24,7 @@
     <string name="wine">Wine</string>
     <string name="italian">Italian</string>
     <string name="vegan">Vegan</string>
+
+    <string name="ingredient">- %s</string>
 
 </resources>

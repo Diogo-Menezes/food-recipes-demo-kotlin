@@ -39,7 +39,7 @@ class RecipeListFragment : BaseFragment() {
     private fun initRecyclerList() {
         adapter = RecipeListAdapter(OnRecipeClick {
             Log.i("RecipeListFragment", "initRecyclerList: $it")
-            setRecipeId (it)
+            setRecipeId(it)
         })
         recipe_list.adapter = adapter
     }
@@ -50,8 +50,12 @@ class RecipeListFragment : BaseFragment() {
     }
 
     private fun subscribeUi() {
+        viewModel.query.observe(viewLifecycleOwner, Observer {
+            viewModel.setTitle(it)
+        })
         viewModel.recipeList.observe(viewLifecycleOwner, Observer { recipeList ->
             adapter.data = recipeList
+            viewModel.loadFromCache("chicken")
         })
     }
 }

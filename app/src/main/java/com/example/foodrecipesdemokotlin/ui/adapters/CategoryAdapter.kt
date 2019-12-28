@@ -37,7 +37,7 @@ class CategoryAdapter(val onCategoryClick: OnCategoryClick) :
     class CategoryViewHolder private constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
-        private val imageView: CircleImageView = itemView.category_image
+        private val imageView = itemView.category_image
         private val category: TextView = itemView.category_title
 
         fun bind(categoryClick: OnCategoryClick, item: Category) {

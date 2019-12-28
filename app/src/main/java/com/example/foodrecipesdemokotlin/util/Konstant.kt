@@ -1,10 +1,11 @@
 package com.example.foodrecipesdemokotlin.util
 
-import androidx.core.content.res.TypedArrayUtils.getString
 import com.example.foodrecipesdemokotlin.R
 
 
 object Konstant {
+    const val NO_RESULTS = "no_results"
+
     //PREFERENCES
     const val PREFERENCES = "com.diogomenezes.foodrecipesdemo.preferences"
 

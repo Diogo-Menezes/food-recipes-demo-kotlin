@@ -19,19 +19,21 @@ enum class Status() {
 
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
-    protected val _query = MutableLiveData<String>()
-    val query: LiveData<String>
-        get() = _query
+    private var viewModelJob = Job()
+
+    protected val _title = MutableLiveData<String>()
+    val title: LiveData<String>
+        get() = _title
 
     protected val _searchView = MutableLiveData<String>()
     val searchView: LiveData<String>
         get() = _searchView
 
+    protected val _query = MutableLiveData<String>()
+    val query: LiveData<String>
+        get() = _query
+
     protected val _pageNumber = MutableLiveData<String>()
-
-
-    private var viewModelJob = Job()
-    protected val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     private val _status = MutableLiveData<Status>()
     val status: LiveData<Status>
