@@ -7,44 +7,37 @@ import com.example.foodrecipesdemokotlin.network.NetworkRecipeContainer
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.RecipeApi
 import com.example.foodrecipesdemokotlin.network.asDatabaseModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class RecipeRepository(private val database:RecipesDatabase) {
+class RecipeRepository(private val database: RecipesDatabase) {
 
-    fun getRecipeList(query: String, page: String): Deferred<NetworkRecipesContainer> {
-        val deferred = RecipeApi.retrofitService.searchRecipesAsync(query = query, page = page)
-
-        GlobalScope.launch {
-            val list = deferred.await().asDatabaseModel()
-            insertRecipes(list)
-        }
-
-        return deferred
+    suspend fun getRecipeList(query: String, page: String): NetworkRecipesContainer {
+        val list = RecipeApi.retrofitService.searchRecipes(query = query, page = page)
+        insertRecipeList(list.asDatabaseModel())
+        return list
     }
 
-    private fun insertRecipes(list: Array<DataBaseRecipe>) {
-        database.recipeDao.insertRecipes(*list)
+    private suspend fun insertRecipeList(list: Array<DataBaseRecipe>) {
+        withContext(Dispatchers.IO) {
+            database.recipeDao.insertRecipes(*list)
+        }
+    }
+
+    private suspend fun insertRecipe(recipe: DataBaseRecipe) {
+        withContext(Dispatchers.IO) {
+            database.recipeDao.insertRecipes(recipe)
+        }
     }
 
     fun loadFromCache(query: String, page: String = "1"): LiveData<List<DataBaseRecipe>> {
         return database.recipeDao.getRecipes(query, page.toInt())
     }
 
-    fun getRecipe(recipeId: String): Deferred<NetworkRecipeContainer> {
-        return RecipeApi.retrofitService.getRecipeAsync(recipeId = recipeId)
+    suspend fun getRecipe(recipeId: String): NetworkRecipeContainer {
+        val recipe = RecipeApi.retrofitService.getRecipe(recipeId = recipeId)
+        insertRecipe(recipe.networkRecipe.asDatabaseModel())
+        return recipe
     }
-
-
-//    companion object {
-//        @Volatile
-//        private var instance: RecipeRepository? = null
-//
-//        fun getInstance(context: Context) =
-//            instance ?: synchronized(this) {
-//                instance ?: RecipeRepository(context).also { instance = it }
-//            }
-//    }
 
 }
