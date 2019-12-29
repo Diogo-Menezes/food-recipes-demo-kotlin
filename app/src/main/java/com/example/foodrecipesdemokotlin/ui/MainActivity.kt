@@ -61,7 +61,7 @@ class MainActivity : BaseActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { viewModel.searchQuery(it) }
+                query?.let { viewModel.searchQuery(it.trim()) }
                 return true
             }
 

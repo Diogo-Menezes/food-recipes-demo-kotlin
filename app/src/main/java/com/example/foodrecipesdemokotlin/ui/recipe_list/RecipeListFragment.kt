@@ -47,6 +47,14 @@ class RecipeListFragment : BaseFragment() {
     }
 
     private fun subscribeUi() {
+        viewModel.getAllRecipes().observe(viewLifecycleOwner, Observer {
+            Log.i("Repository", "subscribeUi: ${it.size}")
+        })
+
+        viewModel.loadCache("chicken").observe(viewLifecycleOwner, Observer {
+            Log.i("Repository", "chicken: ${it.size}")
+        })
+
         viewModel.query.observe(viewLifecycleOwner, Observer {
             viewModel.setTitle(it)
         })

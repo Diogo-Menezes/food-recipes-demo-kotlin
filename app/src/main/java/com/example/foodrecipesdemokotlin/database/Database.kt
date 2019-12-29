@@ -16,28 +16,19 @@ private const val DATABASE_NAME = "recipe_database"
 interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertRecipes(vararg recipe: DataBaseRecipe)
+    suspend fun insertRecipes(vararg recipe: DataBaseRecipe)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecipe(recipe: DataBaseRecipe)
+    suspend fun insertRecipe(recipe: DataBaseRecipe)
 
     @Query("select * from recipes")
     fun getAllRecipes(): LiveData<List<DataBaseRecipe>>
 
-
-    @Query(
-        "select * from recipes where title like '%' or ingredients like '%' ||:query|| '%' order by social_rank desc limit (30*:page)"
-    )
+    @Query("SELECT * FROM recipes WHERE title LIKE '%'||:query||'%' ORDER BY social_rank DESC LIMIT (30*:page)")
     fun getRecipes(query: String, page: Int): LiveData<List<DataBaseRecipe>>
 
     @Query("update recipes set title=:title, publisher=:publisher, image_url=:imageUrl, social_rank=:socialRank where recipe_id=:recipeId")
-    fun updateRecipe(
-        recipeId: String,
-        title: String,
-        publisher: String,
-        imageUrl: String,
-        socialRank: Float
-    )
+    fun updateRecipe(recipeId: String, title: String, publisher: String, imageUrl: String, socialRank: Float)
 
     @Query("select * from recipes where recipe_id = :recipeId")
     fun getRecipe(recipeId: String): LiveData<DataBaseRecipe>
@@ -60,6 +51,7 @@ fun getDatabase(context: Context): RecipesDatabase {
                 RecipesDatabase::class.java,
                 DATABASE_NAME
             )
+                .allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .build()
         }

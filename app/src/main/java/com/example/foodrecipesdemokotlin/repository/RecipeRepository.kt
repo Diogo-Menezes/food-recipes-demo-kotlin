@@ -9,6 +9,7 @@ import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.RecipeApi
 import com.example.foodrecipesdemokotlin.network.asDatabaseModel
 
+
 class RecipeRepository(private val database: RecipesDatabase) {
 
     private val recipeDao = database.recipeDao
@@ -36,7 +37,7 @@ class RecipeRepository(private val database: RecipesDatabase) {
             database.recipeDao.insertRecipe(recipe)
         }
     }
-*/
+    */
     fun loadFromCache(query: String, page: String = "1"): LiveData<List<DataBaseRecipe>> {
         return recipeDao.getRecipes(query, page.toInt())
     }
@@ -52,7 +53,7 @@ class RecipeRepository(private val database: RecipesDatabase) {
 
     fun getRecipes(query: String, page: String): LiveData<Resource<List<DataBaseRecipe>>> {
         return object : NetworkBoundResource<List<DataBaseRecipe>, NetworkRecipesContainer>() {
-            override fun saveCallResult(item: NetworkRecipesContainer) {
+            override suspend fun saveCallResult(item: NetworkRecipesContainer) {
                 recipeDao.insertRecipes(*item.asDatabaseModel())
             }
 

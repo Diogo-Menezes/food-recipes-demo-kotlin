@@ -20,15 +20,17 @@ enum class Status() {
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
-
+    //USED TO UPDATE THE TITLE
     protected val _title = MutableLiveData<String>()
     val title: LiveData<String>
         get() = _title
 
+    //USED FOR TRACKING THE INPUT IN SEARCHVIEW
     protected val _searchView = MutableLiveData<String>()
     val searchView: LiveData<String>
         get() = _searchView
 
+    //USED TO UPDATE THE LOADING TEXT
     protected val _query = MutableLiveData<String>()
     val query: LiveData<String>
         get() = _query
