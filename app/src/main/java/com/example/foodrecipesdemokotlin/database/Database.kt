@@ -15,17 +15,17 @@ private const val DATABASE_NAME = "recipe_database"
 interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertRecipes(vararg recipe: DataBaseRecipe)
+    suspend fun insertRecipes(vararg recipe: DataBaseRecipe)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecipe(recipe: DataBaseRecipe)
+    suspend fun insertRecipe(recipe: DataBaseRecipe)
 
     @Query("select * from recipes")
     fun getAllRecipes(): LiveData<List<DataBaseRecipe>>
 
 
     @Query(
-        "select * from recipes where title like '%' or ingredients like '%' ||:query|| '%' order by social_rank desc limit (30*:page)"
+        "select * from recipes where title like '%'||:query||'%' or ingredients like '%' ||:query|| '%' order by social_rank desc limit (30*:page)"
     )
     fun getRecipes(query: String, page: Int): LiveData<List<DataBaseRecipe>>
 

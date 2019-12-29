@@ -49,5 +49,4 @@ class RecipeRepository(private val database: RecipesDatabase) {
     fun loadRecipeFromCache(recipeId: String): LiveData<DataBaseRecipe> {
         return recipeDao.getRecipe(recipeId)
     }
-
 }
