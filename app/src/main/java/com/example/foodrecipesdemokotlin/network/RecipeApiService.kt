@@ -1,6 +1,7 @@
 package com.example.foodrecipesdemokotlin.network
 
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import androidx.lifecycle.LiveData
+import com.example.foodrecipesdemokotlin.util.LiveDataCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -16,14 +17,14 @@ interface RecipeApiService {
         @Query("key") key: String = "",
         @Query("q") query: String,
         @Query("page") page: String
-    ): ApiResponse<NetworkRecipesContainer>
+    ): LiveData<ApiResponse<NetworkRecipesContainer>>
 
 
     @GET("get")
     suspend fun getRecipe(
         @Query("key") key: String = "",
         @Query("rId") recipeId: String
-    ): ApiResponse<NetworkRecipeContainer>
+    ): LiveData<ApiResponse<NetworkRecipeContainer>>
 }
 
 private val moshi = Moshi.Builder()
@@ -31,7 +32,7 @@ private val moshi = Moshi.Builder()
     .build()
 
 private val retrofit = Retrofit.Builder()
-    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+    .addCallAdapterFactory(LiveDataCallAdapterFactory())
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(BASE_URL)
     .build()

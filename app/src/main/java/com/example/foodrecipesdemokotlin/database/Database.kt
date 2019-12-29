@@ -7,7 +7,6 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import com.squareup.moshi.Types
-import java.lang.reflect.Type
 
 
 private const val DATABASE_NAME = "recipe_database"
@@ -28,7 +27,13 @@ interface RecipeDao {
     fun getRecipes(query: String, page: Int): LiveData<List<DataBaseRecipe>>
 
     @Query("update recipes set title=:title, publisher=:publisher, image_url=:imageUrl, social_rank=:socialRank where recipe_id=:recipeId")
-    fun updateRecipe(recipeId: String, title: String, publisher: String, imageUrl: String, socialRank: Float)
+    fun updateRecipe(
+        recipeId: String,
+        title: String,
+        publisher: String,
+        imageUrl: String,
+        socialRank: Float
+    )
 
     @Query("select * from recipes where recipe_id = :recipeId")
     fun getRecipe(recipeId: String): LiveData<DataBaseRecipe>
@@ -74,7 +79,7 @@ class Convert {
     @TypeConverter
     @ToJson
     fun fromArray(array: Array<String>): String? {
-        val type: Type = Types.getRawType(Array<String>::class.java)
+        val type = Types.getRawType(Array<String>::class.java)
         val adapter = moshi.adapter<Array<String>>(type)
         return adapter.toJson(array)
     }
