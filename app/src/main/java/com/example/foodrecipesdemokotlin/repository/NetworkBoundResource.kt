@@ -13,12 +13,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-// ResultType: Type for the Resource data.
-// RequestType: Type for the API response.
-abstract class NetworkBoundResource<ResultType, RequestType> {
+// CacheObject: Type for the Resource data.
+// RequestObject: Type for the API response.
+abstract class NetworkBoundResource<CacheObject, RequestObject> {
 
-    private val result = MediatorLiveData<Resource<ResultType>>()
-    private val response = MutableLiveData<ApiResponse<RequestType>>()
+    private val result = MediatorLiveData<Resource<CacheObject>>()
+    private val response = MutableLiveData<ApiResponse<RequestObject>>()
 
 
     init {
@@ -27,22 +27,20 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
         val cache = loadFromDb()
         result.addSource(cache) { data ->
             result.removeSource(cache)
-            if (shouldFetch(data)) {
-                fetchFromNetwork(cache)
-            }
+            if (shouldFetch(data)) { fetchFromNetwork(cache) }
         }
     }
 
 
     @MainThread
-    private fun setStatus(newValue: Resource<ResultType>) {
+    private fun setStatus(newValue: Resource<CacheObject>) {
         if (result.value != newValue) {
             result.value = newValue
         }
     }
 
 
-    private fun fetchFromNetwork(cache: LiveData<ResultType>) {
+    private fun fetchFromNetwork(cache: LiveData<CacheObject>) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 val apiResponse = createCall()
@@ -97,29 +95,29 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
 
     // Called to save the result of the API response into the database
     @WorkerThread
-    protected abstract fun saveCallResult(item: RequestType)
+    protected abstract fun saveCallResult(item: RequestObject)
 
     // Called with the data in the database to decide whether to fetch
     // potentially updated data from the network.
     @MainThread
-    protected abstract fun shouldFetch(data: ResultType?): Boolean
+    protected abstract fun shouldFetch(data: CacheObject?): Boolean
 
     // Called to get the cached data from the database.
     @MainThread
-    protected abstract fun loadFromDb(): LiveData<ResultType>
+    protected abstract fun loadFromDb(): LiveData<CacheObject>
 
     // Called to create the API call.
     @MainThread
-    protected abstract suspend fun createCall(): ApiResponse<RequestType>
+    protected abstract suspend fun createCall(): ApiResponse<RequestObject>
 
     // Called when the fetch fails. The child class may want to reset components
     // like rate limiter.
     protected open fun onFetchFailed() {}
 
     @WorkerThread
-    protected open fun processResponse(response: ApiSuccessResponse<RequestType>) = response.body
+    protected open fun processResponse(response: ApiSuccessResponse<RequestObject>) = response.body
 
     // Returns a LiveData object that represents the resource that's implemented
     // in the base class.
-    fun asLiveData() = result as LiveData<Resource<ResultType>>
+    fun asLiveData() = result as LiveData<Resource<CacheObject>>
 }

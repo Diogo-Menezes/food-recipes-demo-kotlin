@@ -2,12 +2,12 @@ package com.example.foodrecipesdemokotlin.repository
 
 import NetworkBoundResource
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import com.example.foodrecipesdemokotlin.database.DataBaseRecipe
 import com.example.foodrecipesdemokotlin.database.RecipesDatabase
-import com.example.foodrecipesdemokotlin.database.asDomainModel
 import com.example.foodrecipesdemokotlin.network.ApiResponse
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.RecipeApi
+import com.example.foodrecipesdemokotlin.network.asDatabaseModel
 
 class RecipeRepository(private val database: RecipesDatabase) {
 
@@ -36,7 +36,7 @@ class RecipeRepository(private val database: RecipesDatabase) {
             database.recipeDao.insertRecipe(recipe)
         }
     }
-
+*/
     fun loadFromCache(query: String, page: String = "1"): LiveData<List<DataBaseRecipe>> {
         return recipeDao.getRecipes(query, page.toInt())
     }
@@ -47,30 +47,26 @@ class RecipeRepository(private val database: RecipesDatabase) {
 
     fun loadRecipeFromCache(recipeId: String): LiveData<DataBaseRecipe> {
         return recipeDao.getRecipe(recipeId)
-    }*/
+    }
 
 
-    fun getRecipes(query: String, page: String): LiveData<Resource<NetworkRecipesContainer>> {
-        return object :
-            NetworkBoundResource<NetworkRecipesContainer, NetworkRecipesContainer>() {
+    fun getRecipes(query: String, page: String): LiveData<Resource<List<DataBaseRecipe>>> {
+        return object : NetworkBoundResource<List<DataBaseRecipe>, NetworkRecipesContainer>() {
             override fun saveCallResult(item: NetworkRecipesContainer) {
-
+                recipeDao.insertRecipes(*item.asDatabaseModel())
             }
 
-            override fun shouldFetch(data: NetworkRecipesContainer?): Boolean {
-
+            override fun shouldFetch(data: List<DataBaseRecipe>?): Boolean {
+                return true
             }
 
-            override fun loadFromDb(): LiveData<NetworkRecipesContainer> {
-                val cache = recipeDao.getRecipes(query, page.toInt()).map {it}
-                return cache
+            override fun loadFromDb(): LiveData<List<DataBaseRecipe>> {
+                return recipeDao.getRecipes(query, page.toInt())
             }
 
             override suspend fun createCall(): ApiResponse<NetworkRecipesContainer> {
                 return RecipeApi.retrofitService.searchRecipes(query = query, page = page)
             }
-
         }.asLiveData()
-
     }
 }

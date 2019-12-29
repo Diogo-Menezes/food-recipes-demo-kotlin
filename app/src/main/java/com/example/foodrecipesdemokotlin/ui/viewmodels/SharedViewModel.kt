@@ -4,17 +4,15 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.example.foodrecipesdemokotlin.FADE_DURATION
 import com.example.foodrecipesdemokotlin.database.DataBaseRecipe
+import com.example.foodrecipesdemokotlin.database.asDomainModel
 import com.example.foodrecipesdemokotlin.database.getDatabase
 import com.example.foodrecipesdemokotlin.domain.Recipe
 import com.example.foodrecipesdemokotlin.domain.RecipeList
-import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
-import com.example.foodrecipesdemokotlin.network.asDomainModel
 import com.example.foodrecipesdemokotlin.repository.RecipeRepository
-import com.example.foodrecipesdemokotlin.util.Konstant
-import kotlinx.coroutines.delay
+import com.example.foodrecipesdemokotlin.repository.ResourceStatus
 import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : BaseViewModel(application) {
@@ -63,26 +61,24 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         Log.i("SharedViewModel", "getRecipeList: called \nQuery:$query\nPage: $page")
         viewModelScope.launch {
             if (status.value != Status.LOADING) setStatus(Status.LOADING)
+            val search = repository.getRecipes(query, page)
 
-            val getRecipes: NetworkRecipesContainer =
-                repository.getRecipeList(query = query, page = page)
-            try {
-                delay(FADE_DURATION)
-                Log.i("SharedViewModel", "recipe count: ${getRecipes.count}")
-                if (getRecipes.recipes.isEmpty()) {
-                    setStatus(Status.NO_RESULTS)
-                    //For displaying NO_RESULTS ViewHolder
-                    _recipeList.value = listOf(RecipeList("", query, Konstant.NO_RESULTS, 0f, ""))
-                } else {
-                    setStatus(Status.DONE)
-                    _recipeList.value = getRecipes.asDomainModel()
+            search.map { resource ->
+                when (resource.status) {
+                    ResourceStatus.SUCCESS -> {
+                        setStatus(Status.DONE)
+                        _recipeList.value = resource.data?.asDomainModel()
+                    }
+                    ResourceStatus.ERROR -> {
+                        setStatus(Status.ERROR)
+                        _recipeList.value = resource.data?.asDomainModel() ?: ArrayList()
+                    }
+                    ResourceStatus.LOADING -> {
+                        setStatus(Status.LOADING)
+                        _recipeList.value = resource.data?.asDomainModel()
+                    }
+
                 }
-
-            } catch (e: Exception) {
-                Log.i("SharedViewModel", "error message: ${e.message}")
-                setStatus(Status.ERROR)
-                //return cached data if possible
-                _recipeList.value = ArrayList()
             }
         }
     }
@@ -116,16 +112,7 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
 
 
     private fun getRecipe(recipeId: String) {
-        viewModelScope.launch {
-            val getRecipe = repository.getRecipe(recipeId)
-            try {
-                _recipe.value = getRecipe.networkRecipe.asDomainModel()
-
-            } catch (e: Exception) {
-                Log.i("SharedViewModel", "getRecipe: ${e.message}")
-                setStatus(Status.ERROR)
-            }
-        }
+        viewModelScope.launch {}
     }
 
     fun setRecipeId(recipeId: String) {

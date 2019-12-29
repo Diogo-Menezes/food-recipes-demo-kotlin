@@ -61,7 +61,6 @@ data class NetworkRecipe(
 
 }
 
-
 fun NetworkRecipesContainer.asDomainModel(): List<RecipeList> {
     return recipes.map {
         RecipeList(
