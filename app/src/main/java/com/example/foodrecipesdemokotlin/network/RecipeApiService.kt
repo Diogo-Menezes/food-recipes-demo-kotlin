@@ -16,14 +16,14 @@ interface RecipeApiService {
         @Query("key") key: String = "",
         @Query("q") query: String,
         @Query("page") page: String
-    ): NetworkRecipesContainer
+    ): ApiResponse<NetworkRecipesContainer>
 
 
     @GET("get")
     suspend fun getRecipe(
         @Query("key") key: String = "",
         @Query("rId") recipeId: String
-    ): NetworkRecipeContainer
+    ): ApiResponse<NetworkRecipeContainer>
 }
 
 private val moshi = Moshi.Builder()

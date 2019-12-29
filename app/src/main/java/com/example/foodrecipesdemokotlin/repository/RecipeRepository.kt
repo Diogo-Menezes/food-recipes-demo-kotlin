@@ -1,20 +1,19 @@
 package com.example.foodrecipesdemokotlin.repository
 
+import NetworkBoundResource
 import androidx.lifecycle.LiveData
-import com.example.foodrecipesdemokotlin.database.DataBaseRecipe
+import androidx.lifecycle.map
 import com.example.foodrecipesdemokotlin.database.RecipesDatabase
-import com.example.foodrecipesdemokotlin.network.NetworkRecipeContainer
+import com.example.foodrecipesdemokotlin.database.asDomainModel
+import com.example.foodrecipesdemokotlin.network.ApiResponse
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.RecipeApi
-import com.example.foodrecipesdemokotlin.network.asDatabaseModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class RecipeRepository(private val database: RecipesDatabase) {
 
     private val recipeDao = database.recipeDao
 
-    suspend fun getRecipeList(query: String, page: String): NetworkRecipesContainer {
+    /*suspend fun getRecipeList(query: String, page: String): NetworkRecipesContainer {
         val list = RecipeApi.retrofitService.searchRecipes(query = query, page = page)
         insertRecipeList(list.asDatabaseModel())
         return list
@@ -48,6 +47,30 @@ class RecipeRepository(private val database: RecipesDatabase) {
 
     fun loadRecipeFromCache(recipeId: String): LiveData<DataBaseRecipe> {
         return recipeDao.getRecipe(recipeId)
-    }
+    }*/
 
+
+    fun getRecipes(query: String, page: String): LiveData<Resource<NetworkRecipesContainer>> {
+        return object :
+            NetworkBoundResource<NetworkRecipesContainer, NetworkRecipesContainer>() {
+            override fun saveCallResult(item: NetworkRecipesContainer) {
+
+            }
+
+            override fun shouldFetch(data: NetworkRecipesContainer?): Boolean {
+
+            }
+
+            override fun loadFromDb(): LiveData<NetworkRecipesContainer> {
+                val cache = recipeDao.getRecipes(query, page.toInt()).map {it}
+                return cache
+            }
+
+            override suspend fun createCall(): ApiResponse<NetworkRecipesContainer> {
+                return RecipeApi.retrofitService.searchRecipes(query = query, page = page)
+            }
+
+        }.asLiveData()
+
+    }
 }

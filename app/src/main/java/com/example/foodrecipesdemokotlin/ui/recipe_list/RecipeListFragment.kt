@@ -37,13 +37,8 @@ class RecipeListFragment : BaseFragment() {
     }
 
     private fun initRecyclerList() {
-        adapter = RecipeListAdapter(OnRecipeClick { recipeId ->
-            Log.i("RecipeListFragment", "initRecyclerList: $recipeId")
-            setRecipeId(recipeId)
-            viewModel.loadRecipe(recipeId)
-        })
+        adapter = RecipeListAdapter(OnRecipeClick { recipeId -> setRecipeId(recipeId) })
         recipe_list.adapter = adapter
-
     }
 
     private fun setRecipeId(recipeId: String) {

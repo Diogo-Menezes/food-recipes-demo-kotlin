@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
 import com.squareup.moshi.Types
 import java.lang.reflect.Type
 
@@ -72,17 +73,17 @@ class Convert {
 
     @TypeConverter
     @FromJson
-    fun fromString(value: String): Array<String>? {
+    fun fromString(string: String): Array<String>? {
         val type = Types.getRawType(Array<String>::class.java)
         val adapter = moshi.adapter<Array<String>>(type)
-        return adapter.fromJson(value)
+        return adapter.fromJson(string)
     }
 
     @TypeConverter
+    @ToJson
     fun fromArray(array: Array<String>): String? {
         val type: Type = Types.getRawType(Array<String>::class.java)
         val adapter = moshi.adapter<Array<String>>(type)
         return adapter.toJson(array)
     }
-
 }

@@ -140,7 +140,7 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         return repository.getAllRecipes()
     }
 
-    fun loadRecipe(recipeId: String) {
-        Log.i("SharedViewModel", "loadCache: ${repository.loadRecipeFromCache(recipeId).value}")
+    fun loadRecipe(recipeId: String): LiveData<DataBaseRecipe> {
+        return repository.loadRecipeFromCache(recipeId)
     }
 }

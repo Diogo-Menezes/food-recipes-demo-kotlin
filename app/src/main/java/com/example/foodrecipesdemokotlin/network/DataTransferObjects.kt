@@ -46,20 +46,14 @@ data class NetworkRecipe(
     @Json(name = "social_rank")
     val socialRank: Float,
 
-    @Json(name = "_id")
-    private val id: String,
-
     @Json(name = "publisher")
     val publisher: String,
-    @Json(name = "publisher_url")
 
+    @Json(name = "publisher_url")
     val publisherUrl: String,
 
     @Json(name = "recipe_id")
     val recipeId: String,
-
-    @Json(name = "source_url")
-    val sourceUrl: String,
 
     @Json(name = "title")
     val title: String
