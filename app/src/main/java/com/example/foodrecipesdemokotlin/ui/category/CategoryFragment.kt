@@ -12,11 +12,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.Category
+import com.example.foodrecipesdemokotlin.network.RecipeApi
 import com.example.foodrecipesdemokotlin.ui.BaseFragment
 import com.example.foodrecipesdemokotlin.ui.adapters.CategoryAdapter
 import com.example.foodrecipesdemokotlin.ui.adapters.OnCategoryClick
 import com.example.foodrecipesdemokotlin.util.Konstant
 import kotlinx.android.synthetic.main.fragment_category_list.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.

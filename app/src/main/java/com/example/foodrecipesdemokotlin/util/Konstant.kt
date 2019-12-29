@@ -16,7 +16,7 @@ object Konstant {
         R.string.chicken,
         R.string.beef,
         R.string.brunch,
-//        R.string.dinner,
+        R.string.soup,
         R.string.wine,
         R.string.italian,
         R.string.vegan
@@ -27,7 +27,7 @@ object Konstant {
         R.drawable.chicken,
         R.drawable.beef,
         R.drawable.brunch,
-//        R.drawable.dinner,
+        R.drawable.soup,
         R.drawable.wine,
         R.drawable.italian,
         R.drawable.vegan

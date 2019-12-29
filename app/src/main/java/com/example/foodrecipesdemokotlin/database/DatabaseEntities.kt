@@ -1,6 +1,5 @@
 package com.example.foodrecipesdemokotlin.database
 
-import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -26,7 +25,7 @@ data class DataBaseRecipe constructor(
     val social_rank: Float,
 
     @ColumnInfo(name = "ingredients")
-    val ingredients: Array<String>?= arrayOf(),
+    val ingredients: Array<String>? = arrayOf(),
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Int
@@ -47,6 +46,16 @@ fun List<DataBaseRecipe>.asDomainModel(): List<RecipeList> {
 fun DataBaseRecipe.asDomainModel(): Recipe {
     return Recipe(
         ingredients = ingredients,
+        imageUrl = image_url,
+        socialRank = social_rank,
+        publisher = publisher,
+        recipeId = recipe_id,
+        title = title
+    )
+}
+
+fun DataBaseRecipe.asDomainModelList(): RecipeList {
+    return RecipeList(
         imageUrl = image_url,
         socialRank = social_rank,
         publisher = publisher,

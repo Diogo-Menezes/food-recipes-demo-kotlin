@@ -21,10 +21,10 @@ interface RecipeDao {
     suspend fun insertRecipe(recipe: DataBaseRecipe)
 
     @Query("select * from recipes")
-    fun getAllRecipes(): LiveData<List<DataBaseRecipe>>
+    fun getAllRecipes(): List<DataBaseRecipe>
 
     @Query("SELECT * FROM recipes WHERE title LIKE '%'||:query||'%' ORDER BY social_rank DESC LIMIT (30*:page)")
-    fun getRecipes(query: String, page: Int): LiveData<List<DataBaseRecipe>>
+    fun getRecipes(query: String, page: Int): List<DataBaseRecipe>
 
     @Query("update recipes set title=:title, publisher=:publisher, image_url=:imageUrl, social_rank=:socialRank where recipe_id=:recipeId")
     fun updateRecipe(
@@ -40,7 +40,7 @@ interface RecipeDao {
 }
 
 
-@Database(entities = [DataBaseRecipe::class], version = 1)
+@Database(entities = [DataBaseRecipe::class], version = 1, exportSchema = false)
 @TypeConverters(Convert::class)
 abstract class RecipesDatabase() : RoomDatabase() {
     abstract val recipeDao: RecipeDao
@@ -56,7 +56,6 @@ fun getDatabase(context: Context): RecipesDatabase {
                 RecipesDatabase::class.java,
                 DATABASE_NAME
             )
-                .allowMainThreadQueries()
                 .fallbackToDestructiveMigration()
                 .build()
         }

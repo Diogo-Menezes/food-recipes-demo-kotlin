@@ -2,7 +2,6 @@ package com.example.foodrecipesdemokotlin.ui.recipe_list
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.foodrecipesdemokotlin.R
+import com.example.foodrecipesdemokotlin.database.asDomainModel
 import com.example.foodrecipesdemokotlin.ui.BaseFragment
 import com.example.foodrecipesdemokotlin.ui.adapters.OnRecipeClick
 import com.example.foodrecipesdemokotlin.ui.adapters.RecipeListAdapter
@@ -47,12 +47,12 @@ class RecipeListFragment : BaseFragment() {
     }
 
     private fun subscribeUi() {
-        viewModel.getAllRecipes().observe(viewLifecycleOwner, Observer {
-            Log.i("Repository", "subscribeUi: ${it.size}")
-        })
 
-        viewModel.loadCache("chicken").observe(viewLifecycleOwner, Observer {
-            Log.i("Repository", "chicken: ${it.size}")
+
+        viewModel.list.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.data = it.asDomainModel()
+            }
         })
 
         viewModel.query.observe(viewLifecycleOwner, Observer {
