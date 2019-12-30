@@ -11,7 +11,7 @@
     <string name="publisher">Publisher</string>
     <string name="ingredients_bullet">- %s</string>
     <string name="searching_text">Searching</string>
-    <string name="no_results">No results found for %s</string>
+    <string name="no_results">No results found for %s.\nTry searching again with other terms.</string>
     <string name="no_more_results">No more results…</string>
 
     <!--    Categories-->

@@ -60,7 +60,9 @@ abstract class NetworkBoundResource<CacheObject, RequestObject> {
                 result.addSource(cache) {
                     it as List<CacheObject>
                     Log.i("NetworkBoundResource", "cacheSize: ${it.size}")
-                    setStatus(Resource.loading(it))
+                    if (it.size > 0) {
+                        setStatus(Resource.loading(it))
+                    }
                 }
                 result.addSource(apiResponse) { response ->
                     result.removeSource(apiResponse)
@@ -68,8 +70,6 @@ abstract class NetworkBoundResource<CacheObject, RequestObject> {
                     checkCallStatus(apiResponse)
 
                     GlobalScope.launch(Main) {
-                        result.removeSource(apiResponse)
-                        result.removeSource(cache)
                         result.addSource(loadFromDb()) { newData ->
                             setStatus(Resource.success(newData))
                         }

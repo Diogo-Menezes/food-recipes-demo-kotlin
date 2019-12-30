@@ -14,6 +14,7 @@ import com.example.foodrecipesdemokotlin.database.asDomainModel
 import com.example.foodrecipesdemokotlin.database.getDatabase
 import com.example.foodrecipesdemokotlin.domain.Recipe
 import com.example.foodrecipesdemokotlin.domain.RecipeList
+import com.example.foodrecipesdemokotlin.domain.insertNoResultsRecipe
 import com.example.foodrecipesdemokotlin.repository.RecipeRepository
 import com.example.foodrecipesdemokotlin.repository.Resource
 import com.example.foodrecipesdemokotlin.repository.ResourceStatus
@@ -71,26 +72,32 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         Log.i("SharedViewModel", "getRecipeList: called \nQuery:$query\nPage: $page")
         viewModelScope.launch {
             if (status.value != Status.LOADING) setStatus(Status.LOADING)
-            val search = repository.getRecipes(query, page, hasInternet)
+            val repository = repository.getRecipes(query, page, hasInternet)
             delay(1000L)
-            recipes.addSource(search) { resource ->
-
-                Log.i("SharedViewModel", "getRecipeList: MEDIATOR")
+            recipes.addSource(repository) { resource ->
+                Log.i("SharedViewModel", "resourceStatus: ${resource.status} ")
                 when (resource.status) {
                     ResourceStatus.SUCCESS -> {
                         setStatus(Status.DONE)
-                        _recipeList.value = resource.data?.asDomainModel()
+                        if (resource.data.isNullOrEmpty()) {
+                            _recipeList.value = insertNoResultsRecipe(_query.value!!)
+                            setStatus(Status.NO_RESULTS)
+                        } else {
+                            _recipeList.value = resource.data.asDomainModel()
+                        }
+                        recipes.removeSource(repository)
                     }
                     ResourceStatus.ERROR -> {
                         setStatus(Status.ERROR)
                         resource.data?.let { _recipeList.value = resource.data.asDomainModel() }
                         _recipeList.value = ArrayList()
+                        recipes.removeSource(repository)
                     }
                     ResourceStatus.LOADING -> {
                         setStatus(Status.LOADING)
                         resource.data?.let {
-                            setStatus(Status.DONE)
                             _recipeList.value = it.asDomainModel()
+                            setStatus(Status.DONE)
                         }
                     }
                 }

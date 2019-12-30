@@ -54,7 +54,7 @@ class RecipeListFragment : BaseFragment() {
 
         viewModel.recipeList.observe(viewLifecycleOwner, Observer { recipeList ->
             recipeList?.let {
-                Log.i("RecipeListFragment", "subscribeUi: called recipeList")
+                Log.i("RecipeListFragment", "subscribeUi: called recipeList size: ${recipeList.size}")
                 adapter.data = recipeList
             }
         })
