@@ -3,6 +3,7 @@ package com.example.foodrecipesdemokotlin.repository
 import NetworkBoundResource
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import com.example.foodrecipesdemokotlin.database.DataBaseRecipe
 import com.example.foodrecipesdemokotlin.database.RecipesDatabase
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
@@ -43,38 +44,39 @@ class RecipeRepository(private val database: RecipesDatabase) {
     }
     */
 
-    fun getRecipes(query: String, page: String): LiveData<List<DataBaseRecipe>> {
+
+    fun getRecipes(
+        query: String,
+        page: String,
+        loadFromInternet: Boolean
+    ): LiveData<Resource<List<DataBaseRecipe>>> {
         return object : NetworkBoundResource<List<DataBaseRecipe>, NetworkRecipesContainer>() {
             override suspend fun saveCallResult(item: NetworkRecipesContainer) {
-                Log.i("RecipeRepository", "saveCallResult: called")
-                recipeDao.insertRecipes(*item.asDatabaseModel())
+                Log.i("RecipeRepository", "saveCallResult: called ${item.count}")
+                GlobalScope.launch(IO) {
+                    recipeDao.insertRecipes(*item.asDatabaseModel())
+                }
             }
 
             override fun shouldFetch(data: List<DataBaseRecipe>?): Boolean {
-                Log.i("RecipeRepository", "shouldFetch: called")
-                return true
+                Log.i("RecipeRepository", "shouldFetch: called ${data?.size}")
+                return loadFromInternet
             }
 
-            override fun loadFromDb(): LiveData<List<DataBaseRecipe>> {
-                var cache: List<DataBaseRecipe> = mutableListOf()
-                GlobalScope.launch(IO) {
-                    cache = recipeDao.getRecipes(query, page.toInt())
-//                    Log.i("RecipeRepository", "loadFromDb: called ${cache}")
+            override fun loadFromDb(): LiveData<List<DataBaseRecipe>> =
+                recipeDao.getRecipes(query = query, page = page.toInt())
+
+
+            override suspend fun createCall(): LiveData<Response<NetworkRecipesContainer>> {
+                return liveData {
+                    val search = RecipeApi.retrofitService.searchRecipes(query = query, page = page)
+                    emit(search)
+                    Log.i(
+                        "RecipeRepository",
+                        "createCall: called...returned code: ${search.code()}"
+                    )
                 }
-
-                return object : LiveData<List<DataBaseRecipe>>() {
-                    override fun onActive() {
-                        super.onActive()
-                        postValue(cache)
-                    }
-                }
             }
-
-            override suspend fun createCall(): Response<NetworkRecipesContainer> {
-                Log.i("RecipeRepository", "createCall: called")
-                return RecipeApi.retrofitService.searchRecipes(query = query, page = page)
-            }
-
         }.asLiveData()
     }
 }

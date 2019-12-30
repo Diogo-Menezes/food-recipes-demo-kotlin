@@ -2,6 +2,7 @@ package com.example.foodrecipesdemokotlin.ui.recipe_list
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,19 +48,18 @@ class RecipeListFragment : BaseFragment() {
     }
 
     private fun subscribeUi() {
-
-
-        viewModel.list.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.data = it.asDomainModel()
-            }
-        })
-
         viewModel.query.observe(viewLifecycleOwner, Observer {
             viewModel.setTitle(it)
         })
+
         viewModel.recipeList.observe(viewLifecycleOwner, Observer { recipeList ->
-            adapter.data = recipeList
+            recipeList?.let {
+                Log.i("RecipeListFragment", "subscribeUi: called recipeList")
+                adapter.data = recipeList
+            }
+        })
+        viewModel.recipes.observe(viewLifecycleOwner, Observer { recipeList ->
+            Log.i("RecipeListFragment", "subscribeUi: called recipes")
         })
     }
 }

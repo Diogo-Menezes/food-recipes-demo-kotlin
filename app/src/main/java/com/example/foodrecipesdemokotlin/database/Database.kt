@@ -21,10 +21,10 @@ interface RecipeDao {
     suspend fun insertRecipe(recipe: DataBaseRecipe)
 
     @Query("select * from recipes")
-    fun getAllRecipes(): List<DataBaseRecipe>
+    fun getAllRecipes(): LiveData<List<DataBaseRecipe>>
 
     @Query("SELECT * FROM recipes WHERE title LIKE '%'||:query||'%' ORDER BY social_rank DESC LIMIT (30*:page)")
-    fun getRecipes(query: String, page: Int): List<DataBaseRecipe>
+    fun getRecipes(query: String, page: Int): LiveData<List<DataBaseRecipe>>
 
     @Query("update recipes set title=:title, publisher=:publisher, image_url=:imageUrl, social_rank=:socialRank where recipe_id=:recipeId")
     fun updateRecipe(

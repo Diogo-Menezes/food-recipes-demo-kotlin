@@ -4,13 +4,10 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.foodrecipesdemokotlin.network.ApiSuccessResponse
-import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.repository.Resource
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -19,23 +16,28 @@ import retrofit2.Response
 // RequestObject: Type for the API response.
 abstract class NetworkBoundResource<CacheObject, RequestObject> {
 
-    private val result = MediatorLiveData<CacheObject>()
-    private val _requestResult = MutableLiveData<RequestObject>()
-    val requestResult: LiveData<RequestObject>
-        get() = _requestResult
-
+    private val result = MediatorLiveData<Resource<CacheObject>>()
+    private val _cache = MutableLiveData<CacheObject>()
+    private val cache: LiveData<CacheObject>
+        get() = _cache
 
     init {
-        result.value = null
+        setStatus(Resource.loading(null))
         @Suppress("LeakingThis")
-        val cache = loadFromDb()
-        result.addSource(cache) { data ->
-            result.removeSource(cache)
-            if (shouldFetch(data)) {
-                fetchFromNetwork(cache)
-            } else {
-                result.addSource(cache) {
-                    result.postValue(cache.value)
+        val dbSource = loadFromDb()
+
+        result.addSource(dbSource) { data: CacheObject? ->
+            data?.let {
+                _cache.value = data
+                setStatus(Resource.loading(data))
+                result.removeSource(dbSource)
+                if (shouldFetch(data)) {
+                    fetchFromNetwork(cache)
+                } else {
+                    result.addSource(dbSource) {
+                        _cache.value = it
+                        setStatus(Resource.success(it))
+                    }
                 }
             }
         }
@@ -44,7 +46,7 @@ abstract class NetworkBoundResource<CacheObject, RequestObject> {
     @MainThread
     private fun setStatus(newValue: Resource<CacheObject>) {
         if (result.value != newValue) {
-            result.value = newValue.data
+            result.value = newValue
         }
     }
 
@@ -52,59 +54,74 @@ abstract class NetworkBoundResource<CacheObject, RequestObject> {
     private fun fetchFromNetwork(cache: LiveData<CacheObject>) {
         Log.i("NetworkBoundResource", "fetchFromNetwork: called")
         GlobalScope.launch(IO) {
-            val response = createCall()
+            val apiResponse = createCall()
             withContext(Main) {
+                //Check Response Status
                 result.addSource(cache) {
-                    Log.i("NetworkBoundResource", "cacheObject: $it")
+                    it as List<CacheObject>
+                    Log.i("NetworkBoundResource", "cacheSize: ${it.size}")
                     setStatus(Resource.loading(it))
-                    result.postValue(it)
                 }
-                val request = checkCallStatus(response)
-                delay(1000L)
-                result.addSource(request) {
-                    result.removeSource(request)
+                result.addSource(apiResponse) { response ->
+                    result.removeSource(apiResponse)
                     result.removeSource(cache)
-                }
-                result.addSource(loadFromDb()) {
-                    Log.i("NetworkBoundResource", "fetchFromNetwork: $it")
-                    setStatus(Resource.success(it))
-                    it?.let {result.postValue(it)}
-                    result.removeSource(loadFromDb())
+                    checkCallStatus(apiResponse)
+
+                    GlobalScope.launch(Main) {
+                        result.removeSource(apiResponse)
+                        result.removeSource(cache)
+                        result.addSource(loadFromDb()) { newData ->
+                            setStatus(Resource.success(newData))
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun checkCallStatus(response: Response<RequestObject>): LiveData<RequestObject> {
+    private fun checkCallStatus(request: LiveData<Response<RequestObject>>) {
         Log.i("NetworkBoundResource", "checkCallStatus: called")
-
         //Needs to be executed on the Main Thread
         GlobalScope.launch(Main) {
-            if (response.isSuccessful) {
-                Log.i("NetworkBoundResource", "checkCallStatus: success")
-                val body = response.body()
-                if (body == null || response.code() == 204) {
-                    _requestResult.value = null
-                    Log.i("NetworkBoundResource", "checkCallStatus: empty result")
-                    //EMPTY RESPONSE
+            result.addSource(request) { response ->
+                if (response.isSuccessful) {
+                    Log.i("NetworkBoundResource", "checkCallStatus: success")
+                    val body = response.body()
+                    if (body == null || response.code() == 204) {
+                        Log.i("NetworkBoundResource", "checkCallStatus: empty result")
+                        //EMPTY RESPONSE
+                        result.addSource(loadFromDb()) {
+                            setStatus(Resource.success(it))
+                        }
+                    } else {
+                        Log.i("NetworkBoundResource", "checkCallStatus: Content delivered")
+                        /*
+                        RESPONSE WITH CONTENT SAVE TO DATABASE
+                       */
+                        this.launch(IO) {
+                            Log.i("NetworkBoundResource", "checkCallStatus: saving results...")
+                            saveCallResult(body)
+                        }
+                        result.addSource(loadFromDb()) {
+                            Log.i("NetworkBoundResource", "checkCallStatus: load new recipes...")
+                            setStatus(Resource.success(it))
+                        }
+                    }
                 } else {
-//                    Log.i("NetworkBoundResource", "checkCallStatus: $body")
-                    _requestResult.value = body
-                    saveCallResult(body)
+                    Log.i("NetworkBoundResource", "checkCallStatus: error")
+                    val msg = response.errorBody()?.string()
+                    val errorMessage = if (msg.isNullOrEmpty()) {
+                        response.message()
+                    } else {
+                        msg
+                    }
+                    Log.i("NetworkBoundResource", "checkCallStatus: $errorMessage")
+                    result.addSource(loadFromDb()) {
+                        setStatus(Resource.error(msg!!, it))
+                    }
                 }
-            } else {
-                Log.i("NetworkBoundResource", "checkCallStatus: error")
-                val msg = response.errorBody()?.string()
-                val errorMessage = if (msg.isNullOrEmpty()) {
-                    response.message()
-                } else {
-                    msg
-                }
-                Log.i("NetworkBoundResource", "checkCallStatus: $errorMessage")
-                //ERROR MESSAGE
             }
         }
-        return requestResult
     }
 
 
@@ -123,16 +140,16 @@ abstract class NetworkBoundResource<CacheObject, RequestObject> {
 
     // Called to create the API call.
     @MainThread
-    protected abstract suspend fun createCall(): Response<RequestObject>
+    protected abstract suspend fun createCall(): LiveData<Response<RequestObject>>
 
     // Called when the fetch fails. The child class may want to reset components
 // like rate limiter.
     protected open fun onFetchFailed() {}
 
     @WorkerThread
-    protected open fun processResponse(response: ApiSuccessResponse<RequestObject>) = response.body
+    protected open fun processResponse(response: Response<RequestObject>) = response.body()
 
     // Returns a LiveData object that represents the resource that's implemented
 // in the base class.
-    fun asLiveData() = result as LiveData<CacheObject>
+    fun asLiveData() = result as LiveData<Resource<CacheObject>>
 }
