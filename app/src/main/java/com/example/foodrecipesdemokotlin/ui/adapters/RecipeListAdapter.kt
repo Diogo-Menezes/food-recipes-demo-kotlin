@@ -74,7 +74,7 @@ class RecipeListAdapter(val recipeClick: OnRecipeClick) :
             Glide.with(image.context)
                 .setDefaultRequestOptions(
                     RequestOptions()
-                        .placeholder(R.drawable.loading_img)
+                        .placeholder(R.drawable.loading_animation)
                         .error(R.drawable.ic_broken_image)
                 )
                 .load(recipe.imageUrl)

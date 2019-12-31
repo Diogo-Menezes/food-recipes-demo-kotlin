@@ -49,7 +49,7 @@ class RecipeDetailsFragment : BaseFragment() {
         Glide.with(this)
             .setDefaultRequestOptions(
                 RequestOptions()
-                    .placeholder(R.drawable.loading_img)
+                    .placeholder(R.drawable.loading_animation)
                     .error(R.drawable.ic_broken_image)
             )
             .load(recipe.imageUrl)
