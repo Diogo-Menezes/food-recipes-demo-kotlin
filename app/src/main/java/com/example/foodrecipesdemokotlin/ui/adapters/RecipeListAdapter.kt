@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.RecipeList
 import com.example.foodrecipesdemokotlin.util.Konstant
@@ -71,6 +72,11 @@ class RecipeListAdapter(val recipeClick: OnRecipeClick) :
             socialScore.text = recipe.socialRank.roundToInt().toString()
 
             Glide.with(image.context)
+                .setDefaultRequestOptions(
+                    RequestOptions()
+                        .placeholder(R.drawable.loading_img)
+                        .error(R.drawable.ic_broken_image)
+                )
                 .load(recipe.imageUrl)
                 .into(image)
         }

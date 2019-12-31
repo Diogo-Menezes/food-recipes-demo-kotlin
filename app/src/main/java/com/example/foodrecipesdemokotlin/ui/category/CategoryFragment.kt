@@ -42,6 +42,7 @@ class CategoryFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         subscribeUi()
         initRecyclerView()
+        displayHomeUp(false)
         activity?.run {
             (this as AppCompatActivity).title = getString(R.string.app_name)
         }

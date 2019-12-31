@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.Job
 
 
@@ -22,7 +23,8 @@ enum class Status() {
 abstract class BaseViewModel(application: Application) : AndroidViewModel(application) {
     var app: Application = application
 
-    protected var viewModelJob = Job()
+    protected var viewModelJob: CompletableJob = Job()
+
     //USED TO UPDATE THE TITLE
     protected val _title = MutableLiveData<String>()
     val title: LiveData<String>
@@ -63,6 +65,5 @@ abstract class BaseViewModel(application: Application) : AndroidViewModel(applic
         super.onCleared()
         viewModelJob.cancel()
     }
-
 
 }

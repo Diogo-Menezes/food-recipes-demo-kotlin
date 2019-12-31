@@ -15,20 +15,18 @@ import com.example.foodrecipesdemokotlin.domain.insertNoResultsRecipe
 import com.example.foodrecipesdemokotlin.repository.RecipeRepository
 import com.example.foodrecipesdemokotlin.util.Resource
 import com.example.foodrecipesdemokotlin.util.ResourceStatus
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : BaseViewModel(application) {
 
-
     private val repository = RecipeRepository(getDatabase(application))
-    private var hasInternet: Boolean = isConnectedToTheInternet()
 
     //Main Activity
     fun searchQuery(searchQuery: String) {
         _searchView.value = searchQuery
         _recipeList.value = ArrayList()
-        searchRecipes(searchQuery)
     }
 
     fun setTitle(title: String) {
@@ -62,31 +60,42 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     private lateinit var repo: LiveData<Resource<List<DataBaseRecipe>>>
 
     private fun getRecipeList(query: String, page: String = "1") {
-        Log.i("SharedViewModel", "getRecipeList: hasInternet: $hasInternet")
         Log.i("SharedViewModel", "getRecipeList: called \nQuery:$query\nPage: $page")
 
+        prepareSearch()
         repo = repository.getRecipes(query, page, isConnectedToTheInternet())
-
-        viewModelScope.launch {
+        viewModelScope.launch(viewModelJob) {
             if (status.value != Status.LOADING) setStatus(Status.LOADING)
-            delay(500L)
-            recipes.addSource(repo) { resource ->
-                Log.i("SharedViewModel", "resourceStatus: ${resource.status} ")
-                when (resource.status) {
-                    ResourceStatus.SUCCESS -> {
-                        setStatus(Status.DONE)
-                        setList(resource)
-                        recipes.removeSource(repo)
-                    }
-                    ResourceStatus.ERROR -> {
-                        setStatus(Status.ERROR)
-                    }
-                    ResourceStatus.LOADING -> {
-                        setStatus(Status.LOADING)
-                        resource.data?.let {
-                            _recipeList.value = it.asDomainModel()
-                            setStatus(Status.LOADING_WITH_DATA)
-                        }
+            delay(500L) //To show loading animation
+            observeRecipes()
+        }
+    }
+
+    private fun prepareSearch() {
+        if (viewModelJob.isActive) viewModelJob.cancel()
+        viewModelJob = Job()
+        if (::repo.isInitialized) {
+            recipes.removeSource(repo)
+        }
+    }
+
+    private fun observeRecipes() {
+        recipes.addSource(repo) { resource ->
+            Log.i("SharedViewModel", "resourceStatus: ${resource.status} ")
+            when (resource.status) {
+                ResourceStatus.SUCCESS -> {
+                    setStatus(Status.DONE)
+                    setList(resource)
+                    recipes.removeSource(repo)
+                }
+                ResourceStatus.ERROR -> {
+                    setStatus(Status.ERROR)
+                }
+                ResourceStatus.LOADING -> {
+                    setStatus(Status.LOADING)
+                    resource.data?.let {
+                        _recipeList.value = it.asDomainModel()
+                        setStatus(Status.LOADING_WITH_DATA)
                     }
                 }
             }
@@ -111,11 +120,13 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun searchNextPage() {
-        getRecipeList(_query.value!!, _pageNumber.value!!)
+        val query = _query.value!!
+        val page = (_pageNumber.value!!.toInt().inc()).toString()
+        getRecipeList(query, page)
     }
 
     fun completedNavigationToDetailList() {
-
+        setStatus(Status.DONE)
     }
 
     fun clearList() {

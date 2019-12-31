@@ -4,8 +4,8 @@ package com.example.foodrecipesdemokotlin.ui
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.foodrecipesdemokotlin.ui.viewmodels.SharedViewModel
 
@@ -19,9 +19,12 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         activity?.run {
             viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
         }
+        displayHomeUp(true)
+
     }
 
 
@@ -37,5 +40,11 @@ abstract class BaseFragment : Fragment() {
 
     open fun searchQuery(query: String, page: String = "1") {
         viewModel.searchRecipes(query, page)
+    }
+
+    protected fun displayHomeUp(show: Boolean) {
+        activity?.run {
+            (this as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(show)
+        }
     }
 }

@@ -5,10 +5,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.SearchView
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.example.foodrecipesdemokotlin.BaseActivity
@@ -16,7 +14,6 @@ import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.ui.category.CategoryFragment
 import com.example.foodrecipesdemokotlin.ui.recipe_detail.RecipeDetailsFragment
 import com.example.foodrecipesdemokotlin.ui.recipe_list.RecipeListFragment
-import com.example.foodrecipesdemokotlin.ui.viewmodels.SharedViewModel
 
 class MainActivity : BaseActivity() {
 
@@ -25,12 +22,12 @@ class MainActivity : BaseActivity() {
     private lateinit var navController: NavController
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         navController = findNavController(R.id.nav_host_fragment)
         subscribeUi()
+
 
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
@@ -70,9 +67,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun search(query: String, view: View) {
-//        val text = query.capitalize()
-////        loading_text.text = text
-////        title = text
         supportActionBar?.collapseActionView()
         closeKeyboard(view)
         return setFragmentSearch(query)
@@ -107,9 +101,9 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    override fun onNavigateUp(): Boolean {
-        Log.i("MainActivity", "onNavigateUp: called")
-        return super.onNavigateUp()
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     override fun onBackPressed() {
