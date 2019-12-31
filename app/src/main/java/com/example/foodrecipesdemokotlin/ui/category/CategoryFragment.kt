@@ -18,8 +18,11 @@ import com.example.foodrecipesdemokotlin.ui.adapters.CategoryAdapter
 import com.example.foodrecipesdemokotlin.ui.adapters.OnCategoryClick
 import com.example.foodrecipesdemokotlin.util.Konstant
 import kotlinx.android.synthetic.main.fragment_category_list.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass.

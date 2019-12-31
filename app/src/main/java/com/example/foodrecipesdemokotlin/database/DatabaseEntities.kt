@@ -8,7 +8,7 @@ import com.example.foodrecipesdemokotlin.domain.RecipeList
 
 
 @Entity(tableName = "recipes")
-data class DataBaseRecipe constructor(
+data class DataBaseRecipe(
     @PrimaryKey
     var recipe_id: String,
 
@@ -28,7 +28,7 @@ data class DataBaseRecipe constructor(
     val ingredients: Array<String>? = arrayOf(),
 
     @ColumnInfo(name = "timestamp")
-    val timestamp: Int
+    val timestamp: Long
 )
 
 fun List<DataBaseRecipe>.asDomainModel(): List<RecipeList> {

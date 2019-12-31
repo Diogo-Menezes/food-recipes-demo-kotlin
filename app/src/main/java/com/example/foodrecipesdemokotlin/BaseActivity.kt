@@ -8,7 +8,9 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.example.foodrecipesdemokotlin.ui.StatusListener
+import com.example.foodrecipesdemokotlin.ui.viewmodels.SharedViewModel
 import com.example.foodrecipesdemokotlin.ui.viewmodels.Status
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,32 +24,16 @@ const val ALPHA_INVISIBLE = 0f
 abstract class BaseActivity : AppCompatActivity(),
     StatusListener {
 
-    private lateinit var animator: ObjectAnimator
+    protected val viewModel: SharedViewModel by lazy {
+        ViewModelProviders.of(this)[SharedViewModel::class.java]
+    }
 
-//    private fun animateVisibility(view: View, alpha: Float) {
-//        view.bringToFront()
-//        view.visibility = VISIBLE
-//        val animatorFadeIn = ObjectAnimator
-//            .ofFloat(view, View.ALPHA, alpha)
-//            .apply {
-//                duration = FADE_DURATION
-//                addListener(object : AnimatorListenerAdapter() {
-//                    override fun onAnimationCancel(animation: Animator?) {
-//                        view.alpha = alpha
-//                    }
-//
-//                    override fun onAnimationEnd(animation: Animator?) {
-//                        view.alpha = alpha
-//                    }
-//                })
-//                start()
-//            }
-//    }
+    private lateinit var animator: ObjectAnimator
 
     private fun animateToInvisible(view: View) {
         view.bringToFront()
         view.visibility = VISIBLE
-        val animatorFadeIn = ObjectAnimator
+        ObjectAnimator
             .ofFloat(view, View.ALPHA, ALPHA_INVISIBLE)
             .apply {
                 duration = FADE_DURATION
@@ -67,7 +53,7 @@ abstract class BaseActivity : AppCompatActivity(),
     private fun animateToVisible(view: View) {
         view.bringToFront()
         view.visibility = VISIBLE
-        val animatorFadeOut = ObjectAnimator
+        ObjectAnimator
             .ofFloat(view, View.ALPHA, ALPHA_VISIBLE).apply {
                 duration = FADE_DURATION
                 addListener(object : AnimatorListenerAdapter() {
@@ -83,9 +69,15 @@ abstract class BaseActivity : AppCompatActivity(),
         when (status) {
             Status.NONE -> return
             Status.LOADING -> showProgress(true)
+            Status.LOADING_WITH_DATA -> animateToVisible(frame_layout)
             Status.ERROR -> showMessage() // TODO("24/12/2019 - add message") //turns the progress off automatically
             Status.DONE -> showProgress(false)
-            Status.NO_RESULTS -> showMessage(getString(R.string.no_results)) //turns the progress off automatically
+            Status.NO_RESULTS -> showMessage(
+                getString(
+                    R.string.no_results,
+                    viewModel.query.value
+                )
+            ) //turns the progress off automatically
         }
     }
 

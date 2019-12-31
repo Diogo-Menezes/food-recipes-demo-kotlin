@@ -9,58 +9,44 @@ import com.example.foodrecipesdemokotlin.database.RecipesDatabase
 import com.example.foodrecipesdemokotlin.network.NetworkRecipesContainer
 import com.example.foodrecipesdemokotlin.network.RecipeApi
 import com.example.foodrecipesdemokotlin.network.asDatabaseModel
+import com.example.foodrecipesdemokotlin.util.Resource
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 
-class RecipeRepository(private val database: RecipesDatabase) {
+class RecipeRepository(database: RecipesDatabase) {
 
     private val recipeDao = database.recipeDao
-
-    /*suspend fun getRecipeList(query: String, page: String): NetworkRecipesContainer {
-        val list = RecipeApi.retrofitService.searchRecipes(query = query, page = page)
-        insertRecipeList(list.asDatabaseModel())
-        return list
-    }
-
-    suspend fun getRecipe(recipeId: String): NetworkRecipeContainer {
-        val recipe = RecipeApi.retrofitService.getRecipe(recipeId = recipeId)
-        insertRecipe(recipe.networkRecipe.asDatabaseModel())
-        return recipe
-    }
-
-    private suspend fun insertRecipeList(list: Array<DataBaseRecipe>) {
-        withContext(Dispatchers.IO) {
-            database.recipeDao.insertRecipes(*list)
-        }
-    }
-
-    private suspend fun insertRecipe(recipe: DataBaseRecipe) {
-        withContext(Dispatchers.IO) {
-            database.recipeDao.insertRecipe(recipe)
-        }
-    }
-    */
-
 
     fun getRecipes(
         query: String,
         page: String,
         loadFromInternet: Boolean
     ): LiveData<Resource<List<DataBaseRecipe>>> {
-        return object : NetworkBoundResource<List<DataBaseRecipe>, NetworkRecipesContainer>() {
+        return object : NetworkBoundResource<List<DataBaseRecipe>, NetworkRecipesContainer>(loadFromInternet) {
             override suspend fun saveCallResult(item: NetworkRecipesContainer) {
                 Log.i("RecipeRepository", "saveCallResult: called ${item.count}")
-                GlobalScope.launch(IO) {
-                    recipeDao.insertRecipes(*item.asDatabaseModel())
+                withContext(IO) {
+                    if (item.count > 0) recipeDao.insertRecipes(*item.asDatabaseModel())
                 }
             }
 
             override fun shouldFetch(data: List<DataBaseRecipe>?): Boolean {
-                Log.i("RecipeRepository", "shouldFetch: called ${data?.size}")
-                return loadFromInternet
+                val shouldFetch = true
+                /*GlobalScope.launch(IO) {
+                    data?.forEach { recipe ->
+                        val timePassed = (System.currentTimeMillis() - recipe.timestamp)
+                        shouldFetch = if (timePassed > TimeUnit.DAYS.toMillis(30)) {
+                            recipeDao.insertRecipe(recipe)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                }*/
+                Log.i("NetworkBoundResource", "shouldFetch: $shouldFetch : ${timeElapsed()}")
+                return shouldFetch
             }
 
             override fun loadFromDb(): LiveData<List<DataBaseRecipe>> =
@@ -69,12 +55,15 @@ class RecipeRepository(private val database: RecipesDatabase) {
 
             override suspend fun createCall(): LiveData<Response<NetworkRecipesContainer>> {
                 return liveData {
-                    val search = RecipeApi.retrofitService.searchRecipes(query = query, page = page)
-                    emit(search)
-                    Log.i(
-                        "RecipeRepository",
-                        "createCall: called...returned code: ${search.code()}"
-                    )
+                    try {
+                        val search =
+                            RecipeApi.retrofitService.searchRecipes(query = query, page = page)
+                        emit(search)
+                    } catch (e: Exception) {
+                        cancelJob(e.message.toString())
+                        Log.i("RecipeRepository", "createCall: ${e.message}")
+
+                    }
                 }
             }
         }.asLiveData()

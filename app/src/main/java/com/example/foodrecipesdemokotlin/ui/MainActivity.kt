@@ -23,9 +23,7 @@ class MainActivity : BaseActivity() {
     private lateinit var mSearchView: androidx.appcompat.widget.SearchView
     private lateinit var fragment: Fragment
     private lateinit var navController: NavController
-    private val viewModel: SharedViewModel by lazy {
-        ViewModelProviders.of(this)[SharedViewModel::class.java]
-    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

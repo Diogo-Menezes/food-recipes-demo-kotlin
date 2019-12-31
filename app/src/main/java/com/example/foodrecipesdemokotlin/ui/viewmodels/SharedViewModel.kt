@@ -1,9 +1,6 @@
 package com.example.foodrecipesdemokotlin.ui.viewmodels
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.net.ConnectivityManager
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -16,19 +13,16 @@ import com.example.foodrecipesdemokotlin.domain.Recipe
 import com.example.foodrecipesdemokotlin.domain.RecipeList
 import com.example.foodrecipesdemokotlin.domain.insertNoResultsRecipe
 import com.example.foodrecipesdemokotlin.repository.RecipeRepository
-import com.example.foodrecipesdemokotlin.repository.Resource
-import com.example.foodrecipesdemokotlin.repository.ResourceStatus
+import com.example.foodrecipesdemokotlin.util.Resource
+import com.example.foodrecipesdemokotlin.util.ResourceStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : BaseViewModel(application) {
 
-    private val repository = RecipeRepository(getDatabase(application))
-    private val connectivityManager =
-        application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    @SuppressLint("NewApi")
-    private var hasInternet: Boolean = connectivityManager.isDefaultNetworkActive
+    private val repository = RecipeRepository(getDatabase(application))
+    private var hasInternet: Boolean = isConnectedToTheInternet()
 
     //Main Activity
     fun searchQuery(searchQuery: String) {
@@ -50,10 +44,11 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
 
     fun setCategory(string: String) {
         _category.value = string
-//        setStatus(Status.LOADING)
     }
 
     fun completedNavigationToRecipeList() {
+        _recipeList.value = ArrayList()
+        setStatus(Status.LOADING)
         _category.value = null
     }
 
@@ -64,44 +59,46 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     val recipeList: LiveData<List<RecipeList>>
         get() = _recipeList
 
-    init {
-        _recipeList.value = ArrayList()
-    }
+    private lateinit var repo: LiveData<Resource<List<DataBaseRecipe>>>
 
     private fun getRecipeList(query: String, page: String = "1") {
+        Log.i("SharedViewModel", "getRecipeList: hasInternet: $hasInternet")
         Log.i("SharedViewModel", "getRecipeList: called \nQuery:$query\nPage: $page")
+
+        repo = repository.getRecipes(query, page, isConnectedToTheInternet())
+
         viewModelScope.launch {
             if (status.value != Status.LOADING) setStatus(Status.LOADING)
-            val repository = repository.getRecipes(query, page, hasInternet)
-            delay(1000L)
-            recipes.addSource(repository) { resource ->
+            delay(500L)
+            recipes.addSource(repo) { resource ->
                 Log.i("SharedViewModel", "resourceStatus: ${resource.status} ")
                 when (resource.status) {
                     ResourceStatus.SUCCESS -> {
                         setStatus(Status.DONE)
-                        if (resource.data.isNullOrEmpty()) {
-                            _recipeList.value = insertNoResultsRecipe(_query.value!!)
-                            setStatus(Status.NO_RESULTS)
-                        } else {
-                            _recipeList.value = resource.data.asDomainModel()
-                        }
-                        recipes.removeSource(repository)
+                        setList(resource)
+                        recipes.removeSource(repo)
                     }
                     ResourceStatus.ERROR -> {
                         setStatus(Status.ERROR)
-                        resource.data?.let { _recipeList.value = resource.data.asDomainModel() }
-                        _recipeList.value = ArrayList()
-                        recipes.removeSource(repository)
                     }
                     ResourceStatus.LOADING -> {
                         setStatus(Status.LOADING)
                         resource.data?.let {
                             _recipeList.value = it.asDomainModel()
-                            setStatus(Status.DONE)
+                            setStatus(Status.LOADING_WITH_DATA)
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun setList(resource: Resource<List<DataBaseRecipe>>) {
+        if (resource.data.isNullOrEmpty()) {
+            _recipeList.value = insertNoResultsRecipe(_query.value!!)
+            setStatus(Status.NO_RESULTS)
+        } else {
+            _recipeList.value = resource.data.asDomainModel()
         }
     }
 
@@ -122,6 +119,9 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun clearList() {
+        if (::repo.isInitialized) {
+            recipes.removeSource(repo)
+        }
         _recipeList.value = ArrayList()
         setStatus(Status.DONE)
     }
@@ -139,4 +139,6 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     fun setRecipeId(recipeId: String) {
         getRecipe(recipeId)
     }
+
 }
+
