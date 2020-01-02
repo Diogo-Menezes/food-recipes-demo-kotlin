@@ -10,6 +10,7 @@ import com.example.foodrecipesdemokotlin.domain.RecipeList
 @Entity(tableName = "recipes")
 data class DataBaseRecipe(
     @PrimaryKey
+    @ColumnInfo(name = "recipe_id")
     var recipe_id: String,
 
     @ColumnInfo(name = "title")
