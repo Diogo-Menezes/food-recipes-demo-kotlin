@@ -25,7 +25,7 @@ interface RecipeApiService {
     suspend fun getRecipe(
         @Query("key") key: String = "",
         @Query("rId") recipeId: String
-    ): NetworkRecipeContainer
+    ): Response<NetworkRecipeContainer>
 }
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()

@@ -85,13 +85,13 @@ abstract class NetworkBoundResource<CacheObject, RequestObject>(loadFromInternet
                 result.addSource(apiResponse) {
                     Log.i("NetworkBoundResource", "response: ${timeElapsed()}")
                     result.removeSource(apiResponse)
-                    checkCallStatus(apiResponse)
+                    checkResponse(apiResponse)
                 }
             }
         }
     }
 
-    private fun checkCallStatus(request: LiveData<Response<RequestObject>>) {
+    private fun checkResponse(request: LiveData<Response<RequestObject>>) {
         Log.i("NetworkBoundResource", "checkCallStatus: called ${timeElapsed()}")
         //Needs to be executed on the Main Thread
         coroutineScope.launch(Main) {

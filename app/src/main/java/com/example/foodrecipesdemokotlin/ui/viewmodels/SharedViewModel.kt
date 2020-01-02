@@ -126,6 +126,7 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun completedNavigationToDetailList() {
+        prepareSearch()
         setStatus(Status.DONE)
     }
 
@@ -143,8 +144,32 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     val recipe: LiveData<Recipe>
         get() = _recipe
 
+    val getRecipe: MediatorLiveData<Resource<DataBaseRecipe>> = MediatorLiveData()
+
+
     private fun getRecipe(recipeId: String) {
-        viewModelScope.launch {}
+
+        viewModelScope.launch(viewModelJob) {
+            val recipeRepo = repository.getRecipe(recipeId, isConnectedToTheInternet())
+            getRecipe.addSource(recipeRepo) { resource ->
+
+                when (resource.status) {
+                    ResourceStatus.SUCCESS -> {
+                        resource.data?.let {
+                            _recipe.value = it.asDomainModel()
+                            setStatus(Status.DONE)
+                            getRecipe.removeSource(recipeRepo)
+                        }
+                    }
+                    ResourceStatus.LOADING -> {
+                        resource.data?.let { _recipe.value = it.asDomainModel() }
+                    }
+                    ResourceStatus.ERROR -> {
+                        setStatus(Status.ERROR)
+                    }
+                }
+            }
+        }
     }
 
     fun setRecipeId(recipeId: String) {

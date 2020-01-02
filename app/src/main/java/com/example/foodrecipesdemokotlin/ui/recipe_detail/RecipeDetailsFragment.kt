@@ -36,6 +36,9 @@ class RecipeDetailsFragment : BaseFragment() {
     }
 
     private fun subscribeUi() {
+        viewModel.getRecipe.observe(viewLifecycleOwner, Observer {
+            Log.i("RecipeDetailsFragment", "subscribeUi: ${it.status}")
+        })
         viewModel.recipe.observe(viewLifecycleOwner, Observer { recipe ->
             recipe?.let {
                 Log.i("RecipeDetailsFragment", "subscribeUi: $recipe")
