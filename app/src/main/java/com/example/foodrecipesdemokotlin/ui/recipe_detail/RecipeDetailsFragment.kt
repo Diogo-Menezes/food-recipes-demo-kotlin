@@ -67,7 +67,6 @@ class RecipeDetailsFragment : BaseFragment() {
 
     private fun setDetails(recipe: Recipe) {
         this.mRecipe = recipe
-        activity?.title = recipe.title
         Glide.with(this)
             .setDefaultRequestOptions(
                 RequestOptions()
@@ -97,14 +96,13 @@ class RecipeDetailsFragment : BaseFragment() {
 //            recipe_detail_favorite_icon.setImageResource(R.drawable.ic_not_favorite)
             isFavorite = false
             ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
-                repeatCount = 0
+
                 repeatMode = ObjectAnimator.RESTART
             }.start()
         } else {
 //            recipe_detail_favorite_icon.setImageResource(R.drawable.ic_favorite)
             isFavorite = true
             ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
-                repeatCount = 1
                 repeatMode = ObjectAnimator.RESTART
                 duration = 400L
             }.start()

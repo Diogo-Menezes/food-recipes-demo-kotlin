@@ -27,5 +27,6 @@
 
     <string name="ingredient">- %s</string>
     <string name="make_recipe_favorite">Make recipe favorite</string>
+    <string name="share_this_recipe">Share this recipe</string>
 
 </resources>

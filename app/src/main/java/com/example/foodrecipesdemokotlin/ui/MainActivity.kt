@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.SearchView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -29,7 +30,7 @@ class MainActivity : BaseActivity() {
         subscribeUi()
 
 
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
     }
 

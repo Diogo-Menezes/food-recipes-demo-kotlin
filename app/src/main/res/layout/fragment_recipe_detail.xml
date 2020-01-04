@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/recipe_detail_image"
             android:layout_width="match_parent"
@@ -21,6 +22,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/vegan" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:alpha="0.15"
+            android:background="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/recipe_detail_favorite_icon"
@@ -33,9 +43,33 @@
             android:focusable="true"
             android:src="@drawable/ic_not_favorite"
             android:tint="@color/secondaryColor"
+            app:layout_constraintEnd_toStartOf="@id/recipe_detail_share_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/recipe_detail_share_icon"
+            android:layout_width="@dimen/fav_icon_dimen"
+            android:layout_height="@dimen/fav_icon_dimen"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/share_this_recipe"
+            android:focusable="true"
+            android:src="@drawable/ic_share"
+            android:tint="@color/secondaryColor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:alpha="0.25"
+            android:background="@drawable/gradient"
+            app:layout_constraintBottom_toTopOf="@id/recipe_publisher_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_detail_image" />
 
         <TextView
             android:id="@+id/recipe_detail_title"
@@ -47,11 +81,12 @@
             android:textAlignment="center"
             android:textColor="@color/primaryColor"
             android:textSize="@dimen/recipe_title_text_size"
-            android:textStyle="bold"
+            android:textStyle="bold|italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recipe_detail_image"
             tools:text="Recipe Title" />
+
 
         <TextView
             android:id="@+id/recipe_publisher_label"
@@ -86,7 +121,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="40dp"
             android:text="@string/ingredients"
             android:textColor="@color/primaryDarkColor"
             android:textSize="@dimen/recipe_publisher_text_size"
@@ -100,13 +135,13 @@
             android:id="@+id/social_score_layout"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
             app:cardBackgroundColor="@color/primaryDarkColor"
             app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:layout_constraintBottom_toTopOf="@id/view"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recipe_detail_title">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -136,29 +171,25 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/primaryColor"
-            app:layout_constraintEnd_toEndOf="@+id/ingredients_card_layout"
-            app:layout_constraintStart_toStartOf="@+id/ingredients_card_layout"
-            app:layout_constraintTop_toBottomOf="@+id/ingredients_label" />
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/ingredients_card_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="50dp"
             app:cardCornerRadius="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/ingredients_label"
-            app:layout_constraintTop_toBottomOf="@id/view">
-
+            app:layout_constraintTop_toBottomOf="@id/ingredients_label">
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/primaryColor"/>
             <LinearLayout
                 android:id="@+id/ingredients_container"
                 android:layout_width="match_parent"
