@@ -22,23 +22,53 @@ class RecipeRepository(database: RecipesDatabase) {
     private val recipeDao = database.recipeDao
 
 
+    suspend fun saveRecipeFavorite(recipeId: String, favorite: Boolean) {
+        withContext(IO) {
+            recipeDao.setRecipeFavorite(recipeId, favorite)
+            Log.i("RecipeRepository", "saveRecipeFavorite: $favorite")
+        }
+
+    }
+
+
     fun getRecipe(recipeId: String, hasInternet: Boolean): LiveData<Resource<DataBaseRecipe>> {
         return object : NetworkBoundResource<DataBaseRecipe, NetworkRecipeContainer>(hasInternet) {
             override suspend fun saveCallResult(item: NetworkRecipeContainer) {
                 val recipe = item.networkRecipe.asDatabaseModel()
                 withContext(IO) {
+                    var isFavorite = false
+                    if (recipeDao.insertRecipes(recipe) == -1L) {
+                        isFavorite = recipeDao.checkRecipe(recipe.recipe_id).favorite
+                    }
                     recipeDao.insertRecipe(recipe)
+                    recipeDao.setRecipeFavorite(recipe.recipe_id, isFavorite)
                 }
             }
 
             override fun shouldFetch(data: DataBaseRecipe?): Boolean {
-                var shouldFetch = true
+                var shouldFetch = false
                 data?.let { recipe ->
-                    shouldFetch =
-                        (System.currentTimeMillis() - recipe.timestamp) >= TimeUnit.DAYS.toMillis(30)
+                    Log.i(
+                        "RecipeRepository",
+                        "shouldFetch: ${recipe.timestamp} size: ${recipe.ingredients?.size}"
+                    )
+                    shouldFetch = when {
+                        recipe.timestamp == 0L -> {
+                            true
+                        }
+                        System.currentTimeMillis() - recipe.timestamp >= TimeUnit.DAYS.toMillis(30) -> {
+                            true
+                        }
+                        recipe.ingredients?.size == 0 -> {
+                            true
+                        }
+                        else -> false
+                    }
                 }
+                Log.i("NetworkBoundResource", "shouldFetch: $shouldFetch")
                 return shouldFetch
             }
+
 
             override fun loadFromDb(): LiveData<DataBaseRecipe> = recipeDao.getRecipe(recipeId)
 
@@ -47,6 +77,7 @@ class RecipeRepository(database: RecipesDatabase) {
                 return liveData {
                     try {
                         val response = RecipeApi.retrofitService.getRecipe(recipeId = recipeId)
+                        Log.i("RecipeRepository", "createCall:${response.body()} ")
                         emit(response)
                     } catch (e: Exception) {
                         cancelJob(e.message.toString())
@@ -69,11 +100,32 @@ class RecipeRepository(database: RecipesDatabase) {
             override suspend fun saveCallResult(item: NetworkRecipesContainer) {
                 Log.i("RecipeRepository", "saveCallResult: called ${item.count}")
                 withContext(IO) {
-                    if (item.count > 0) recipeDao.insertRecipes(*item.asDatabaseModel())
+                    val recipeList = item.asDatabaseModel()
+                    recipeList.forEach { recipe ->
+                        if (recipeDao.insertRecipes(recipe) == -1L) {
+                            //THE RECIPE ALREADY EXISTS UPDATE ONLY
+                            Log.i("RecipeRepository", "saveCallResult: update ${recipe.title}")
+                            recipeDao.updateRecipes(
+                                recipe.recipe_id,
+                                recipe.title,
+                                recipe.publisher,
+                                recipe.image_url,
+                                recipe.social_rank
+                            )
+                        } else {
+                            Log.i(
+                                "RecipeRepository",
+                                "saveCallResult: insertRecipe ${recipe.title}"
+                            )
+                            recipeDao.insertRecipe(recipe)
+                        }
+                    }
                 }
             }
 
-            override fun shouldFetch(data: List<DataBaseRecipe>?) = true
+            override fun shouldFetch(data: List<DataBaseRecipe>?): Boolean {
+                return true
+            }
 
             override fun loadFromDb(): LiveData<List<DataBaseRecipe>> =
                 recipeDao.getRecipes(query = query, page = page.toInt())

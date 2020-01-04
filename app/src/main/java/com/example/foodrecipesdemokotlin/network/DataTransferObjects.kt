@@ -81,7 +81,7 @@ fun NetworkRecipesContainer.asDatabaseModel(): Array<DataBaseRecipe> {
             publisher = it.publisher,
             image_url = it.imageUrl,
             social_rank = it.socialRank,
-            timestamp = System.currentTimeMillis()
+            timestamp = 0L
         )
     }.toTypedArray()
 }

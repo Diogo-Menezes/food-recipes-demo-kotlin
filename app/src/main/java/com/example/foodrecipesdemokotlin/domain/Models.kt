@@ -1,6 +1,5 @@
 package com.example.foodrecipesdemokotlin.domain
 
-import android.app.DownloadManager
 import com.example.foodrecipesdemokotlin.util.Konstant
 
 data class Recipe(
@@ -9,7 +8,8 @@ data class Recipe(
     val socialRank: Float,
     val publisher: String,
     val recipeId: String,
-    val title: String
+    val title: String,
+    val favorite: Boolean = false
 )
 
 data class RecipeList(

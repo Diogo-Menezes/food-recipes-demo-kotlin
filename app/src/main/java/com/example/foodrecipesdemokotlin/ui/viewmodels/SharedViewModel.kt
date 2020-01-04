@@ -126,7 +126,7 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun completedNavigationToDetailList() {
-        prepareSearch()
+//        prepareSearch()
         setStatus(Status.DONE)
     }
 
@@ -146,16 +146,21 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
 
     val getRecipe: MediatorLiveData<Resource<DataBaseRecipe>> = MediatorLiveData()
 
+    private val _favorite = MutableLiveData<Boolean>()
+    val favorite: LiveData<Boolean>
+        get() = _favorite
+
 
     private fun getRecipe(recipeId: String) {
-
+        prepareSearch()
         viewModelScope.launch(viewModelJob) {
             val recipeRepo = repository.getRecipe(recipeId, isConnectedToTheInternet())
             getRecipe.addSource(recipeRepo) { resource ->
-
+                Log.i("SharedViewModel", "getRecipe: ${resource.status}")
                 when (resource.status) {
                     ResourceStatus.SUCCESS -> {
                         resource.data?.let {
+                            _favorite.value = it.favorite
                             _recipe.value = it.asDomainModel()
                             setStatus(Status.DONE)
                             getRecipe.removeSource(recipeRepo)
@@ -172,8 +177,17 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+
     fun setRecipeId(recipeId: String) {
+        _favorite.value=false
         getRecipe(recipeId)
+    }
+
+    fun changeRecipeFavorite(recipeId: String, favorite: Boolean) {
+        viewModelScope.launch {
+            repository.saveRecipeFavorite(recipeId, favorite)
+            _favorite.value = favorite
+        }
     }
 
 }

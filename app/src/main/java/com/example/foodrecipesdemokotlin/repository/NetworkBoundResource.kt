@@ -31,8 +31,8 @@ abstract class NetworkBoundResource<CacheObject, RequestObject>(loadFromInternet
             setResult(Resource.loading(cachedData))
             Log.i("NetworkBoundResource", "load cache time: ${timeElapsed()}")
             result.removeSource(cache)
-            if (loadFromInternet) {
-                if (shouldFetch(cachedData)) fetchFromNetwork(cache)
+            if (loadFromInternet && shouldFetch(cachedData)) {
+                fetchFromNetwork(cache)
             } else {
                 loadFromDatabaseAndReturn(cache)
             }

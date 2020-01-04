@@ -15,7 +15,7 @@ private const val DATABASE_NAME = "recipe_database"
 interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRecipes(vararg recipe: DataBaseRecipe)
+    suspend fun insertRecipes(recipe: DataBaseRecipe): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipe(recipe: DataBaseRecipe)
@@ -23,19 +23,22 @@ interface RecipeDao {
     @Query("select * from recipes")
     fun getAllRecipes(): LiveData<List<DataBaseRecipe>>
 
-    @Query("SELECT * FROM recipes WHERE title LIKE '%'||:query||'%' ORDER BY social_rank DESC LIMIT (30*:page)")
+    @Query("select * from recipes WHERE recipe_id = :recipeId")
+    suspend fun checkRecipe(recipeId: String): DataBaseRecipe
+
+    @Query("SELECT * FROM recipes WHERE title LIKE '%'||:query||'%' ORDER BY social_rank DESC LIMIT (:page*30)")
     fun getRecipes(query: String, page: Int): LiveData<List<DataBaseRecipe>>
 
     @Query("update recipes set title=:title, publisher=:publisher, image_url=:imageUrl, social_rank=:socialRank where recipe_id=:recipeId")
-    fun updateRecipe(
-        recipeId: String,
-        title: String,
-        publisher: String,
-        imageUrl: String,
-        socialRank: Float
-    )
+    fun updateRecipes(recipeId: String, title: String, publisher: String, imageUrl: String, socialRank: Float)
 
-    @Query("select * from recipes where recipe_id = :recipeId")
+    @Query("SELECT * FROM recipes WHERE favorite =:favorite")
+    fun getAllFavoritesRecipes(favorite: Boolean = true): LiveData<DataBaseRecipe>
+
+    @Query("UPDATE recipes SET favorite=:favorite WHERE recipe_id=:id")
+    suspend fun setRecipeFavorite(id: String, favorite: Boolean)
+
+    @Query("SELECT * FROM recipes WHERE recipe_id = :recipeId")
     fun getRecipe(recipeId: String): LiveData<DataBaseRecipe>
 }
 

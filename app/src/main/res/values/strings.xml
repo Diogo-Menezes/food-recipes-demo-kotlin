@@ -26,5 +26,6 @@
     <string name="vegan">Vegan</string>
 
     <string name="ingredient">- %s</string>
+    <string name="make_recipe_favorite">Make recipe favorite</string>
 
 </resources>

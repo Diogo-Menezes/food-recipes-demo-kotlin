@@ -11,6 +11,6 @@ class ViewModelProviderFactory(private val application: Application) : ViewModel
                 application
             ) as T
         }
-        throw IllegalArgumentException("Uknown ViewModel class")
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

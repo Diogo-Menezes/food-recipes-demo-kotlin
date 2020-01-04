@@ -29,7 +29,10 @@ data class DataBaseRecipe(
     val ingredients: Array<String>? = arrayOf(),
 
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long
+    val timestamp: Long,
+
+    @ColumnInfo(name = "favorite")
+    val favorite: Boolean = false
 )
 
 fun List<DataBaseRecipe>.asDomainModel(): List<RecipeList> {
@@ -51,7 +54,8 @@ fun DataBaseRecipe.asDomainModel(): Recipe {
         socialRank = social_rank,
         publisher = publisher,
         recipeId = recipe_id,
-        title = title
+        title = title,
+        favorite = favorite
     )
 }
 
