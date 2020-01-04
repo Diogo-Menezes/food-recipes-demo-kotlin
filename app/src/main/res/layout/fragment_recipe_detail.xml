@@ -60,6 +60,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/recipe_detail_close_icon"
+            android:layout_width="@dimen/fav_icon_dimen"
+            android:layout_height="@dimen/fav_icon_dimen"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/close_recipe"
+            android:focusable="true"
+            android:src="@drawable/ic_close"
+            android:tint="@color/secondaryColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"

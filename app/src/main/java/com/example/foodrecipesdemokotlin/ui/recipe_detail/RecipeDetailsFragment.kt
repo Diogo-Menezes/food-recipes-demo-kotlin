@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.foodrecipesdemokotlin.R
@@ -34,7 +35,6 @@ class RecipeDetailsFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        displayHomeUp(true)
         subscribeUi()
         return inflater.inflate(R.layout.fragment_recipe_detail, container, false)
     }
@@ -44,6 +44,7 @@ class RecipeDetailsFragment : BaseFragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
         recipe_detail_favorite_icon.setOnClickListener { animateChange(it) }
         recipe_detail_share_icon.setOnClickListener { shareRecipe() }
+        recipe_detail_close_icon.setOnClickListener { findNavController().navigateUp() }
     }
 
     private fun shareRecipe() {

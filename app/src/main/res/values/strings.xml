@@ -29,5 +29,6 @@
     <string name="make_recipe_favorite">Make recipe favorite</string>
     <string name="share_this_recipe">Share this recipe</string>
     <string name="check_this_recipe">Check this recipe:</string>
+    <string name="close_recipe">Close recipe</string>
 
 </resources>
