@@ -25,6 +25,7 @@ abstract class BaseFragment : Fragment() {
         }
         displayHomeUp(true)
 
+
     }
 
 

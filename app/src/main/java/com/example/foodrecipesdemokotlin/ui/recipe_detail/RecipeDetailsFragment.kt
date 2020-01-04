@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -39,7 +41,28 @@ class RecipeDetailsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.hide()
         recipe_detail_favorite_icon.setOnClickListener { animateChange(it) }
+        recipe_detail_share_icon.setOnClickListener { shareRecipe() }
+    }
+
+    private fun shareRecipe() {
+
+        var shareText = StringBuilder()
+            .append(resources.getString(R.string.check_this_recipe) + "\n")
+            .append("${mRecipe.title}\n\n")
+            .append(resources.getString(R.string.ingredients) + ":\n")
+        mRecipe.ingredients.apply {
+            this?.forEach { shareText.append("- $it\n") }
+        }
+
+
+        val intent = ShareCompat.IntentBuilder.from(activity)
+            .setText(shareText.toString())
+            .setType("text/plain")
+            .intent
+
+        startActivity(intent)
     }
 
 
@@ -83,7 +106,8 @@ class RecipeDetailsFragment : BaseFragment() {
 
 
         ingredientsContainer = ingredients_container
-
+        ingredientsContainer.removeAllViews()
+        
         recipe.ingredients?.forEach {
             val view = TextView(context!!)
             view.text = getString(R.string.ingredient, it)
