@@ -66,7 +66,7 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
         repo = repository.getRecipes(query, page, isConnectedToTheInternet())
         viewModelScope.launch(viewModelJob) {
             if (status.value != Status.LOADING) setStatus(Status.LOADING)
-            delay(500L) //To show loading animation
+            delay(0L) //To show loading animation
             observeRecipes()
         }
     }
@@ -126,7 +126,6 @@ class SharedViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun completedNavigationToDetailList() {
-//        prepareSearch()
         setStatus(Status.DONE)
     }
 

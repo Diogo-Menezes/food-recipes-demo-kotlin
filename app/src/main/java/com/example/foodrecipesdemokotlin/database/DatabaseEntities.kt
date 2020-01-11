@@ -1,5 +1,6 @@
 package com.example.foodrecipesdemokotlin.database
 
+import androidx.annotation.Nullable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -26,7 +27,8 @@ data class DataBaseRecipe(
     val social_rank: Float,
 
     @ColumnInfo(name = "ingredients")
-    val ingredients: Array<String>? = arrayOf(),
+    @Nullable
+    val ingredients: Array<String>?= emptyArray(),
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,

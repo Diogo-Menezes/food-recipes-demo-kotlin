@@ -7,7 +7,7 @@
     <string name="score">Score</string>
     <string name="recipe_image">Recipe Image</string>
     <string name="ingredients">Ingredient list</string>
-    <string name="social_score">Social Score</string>
+    <string name="social_score">Score</string>
     <string name="publisher">Publisher</string>
     <string name="ingredients_bullet">- %s</string>
     <string name="searching_text">Searching</string>
@@ -30,5 +30,7 @@
     <string name="share_this_recipe">Share this recipe</string>
     <string name="check_this_recipe">Check this recipe:</string>
     <string name="close_recipe">Close recipe</string>
+    <string name="missing_ingredients_list">Error retrieving ingredients.
+        \nCheck network connection.</string>
 
 </resources>

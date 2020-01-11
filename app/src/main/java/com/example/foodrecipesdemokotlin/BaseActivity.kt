@@ -17,9 +17,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.load_layout
 import kotlinx.android.synthetic.main.loading_layout.*
 
-const val FADE_DURATION = 500L
-const val ALPHA_VISIBLE = 1f
-const val ALPHA_INVISIBLE = 0f
+private const val FADE_DURATION = 500L
+private const val ALPHA_VISIBLE = 1f
+private const val ALPHA_INVISIBLE = 0f
 
 abstract class BaseActivity : AppCompatActivity(),
     StatusListener {
@@ -30,13 +30,13 @@ abstract class BaseActivity : AppCompatActivity(),
 
     private lateinit var animator: ObjectAnimator
 
-    private fun animateToInvisible(view: View) {
+    fun animateToInvisible(view: View, duration: Long = FADE_DURATION) {
         view.bringToFront()
         view.visibility = VISIBLE
         ObjectAnimator
             .ofFloat(view, View.ALPHA, ALPHA_INVISIBLE)
             .apply {
-                duration = FADE_DURATION
+                this.duration = duration
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationCancel(animation: Animator?) {
                         view.alpha = ALPHA_INVISIBLE
@@ -50,12 +50,12 @@ abstract class BaseActivity : AppCompatActivity(),
             }
     }
 
-    private fun animateToVisible(view: View) {
+    fun animateToVisible(view: View, duration: Long = FADE_DURATION) {
         view.bringToFront()
         view.visibility = VISIBLE
         ObjectAnimator
             .ofFloat(view, View.ALPHA, ALPHA_VISIBLE).apply {
-                duration = FADE_DURATION
+                this.duration = FADE_DURATION
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {
                         view.alpha = ALPHA_VISIBLE

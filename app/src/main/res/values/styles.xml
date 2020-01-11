@@ -20,4 +20,13 @@
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="recipe_detail_icon_bar">
+        <item name="android:layout_width">@dimen/fav_icon_dimen</item>
+        <item name="android:layout_height">@dimen/recipe_detail_top_bar_size</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:tint">@color/primaryColor</item>
+    </style>
 </resources>

@@ -39,6 +39,15 @@ abstract class NetworkBoundResource<CacheObject, RequestObject>(loadFromInternet
         }
     }
 
+    private fun initJob() {
+        if (job.isActive) {
+            job.cancel()
+        }
+        job = Job()
+        coroutineScope = CoroutineScope(IO + job)
+
+    }
+
     //For debug
     protected fun timeElapsed() = System.currentTimeMillis() - startTime
 
@@ -52,15 +61,6 @@ abstract class NetworkBoundResource<CacheObject, RequestObject>(loadFromInternet
                 }
             }
         }
-    }
-
-    private fun initJob() {
-        if (job.isActive) {
-            job.cancel()
-        }
-        job = Job()
-        coroutineScope = CoroutineScope(IO + job)
-
     }
 
     @MainThread
@@ -126,10 +126,7 @@ abstract class NetworkBoundResource<CacheObject, RequestObject>(loadFromInternet
                             saveCallResult(body)
                             withContext(Main) {
                                 result.addSource(loadFromDb()) {
-                                    Log.i(
-                                        "NetworkBoundResource",
-                                        "checkCallStatus: load new recipes... ${timeElapsed()}"
-                                    )
+                                    Log.i("NetworkBoundResource", "checkCallStatus: load new recipes... ${timeElapsed()}")
                                     result.removeSource(loadFromDb())
                                     setResult(Resource.success(it))
                                 }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,6 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.foodrecipesdemokotlin.R
 import com.example.foodrecipesdemokotlin.domain.Recipe
 import com.example.foodrecipesdemokotlin.ui.BaseFragment
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.fragment_recipe_detail.*
 import kotlin.math.roundToInt
 
@@ -42,9 +44,37 @@ class RecipeDetailsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.hide()
-        recipe_detail_favorite_icon.setOnClickListener { animateChange(it) }
+        recipe_detail_favorite_icon.setOnClickListener {
+            animateChange(it)
+            changeFavorite()
+        }
         recipe_detail_share_icon.setOnClickListener { shareRecipe() }
         recipe_detail_close_icon.setOnClickListener { findNavController().navigateUp() }
+        setScrollListener()
+    }
+
+    private fun setScrollListener() {
+        val appBarLayout = recipe_detail_app_bar_layout
+        val offsetChangedListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+            Log.i("RecipeDetailsFragment", "setScrollListener: $verticalOffset \nrange:  ${appBarLayout.totalScrollRange}")
+
+            if (verticalOffset <= (-appBarLayout.totalScrollRange / 2)) {
+                recipe_detail_title.visibility = INVISIBLE
+                recipe_detail_title_view_background.visibility = INVISIBLE
+                recipe_detail_app_bar_title.visibility = VISIBLE
+
+            } else {
+                recipe_detail_title.visibility = VISIBLE
+                recipe_detail_title_view_background.visibility = VISIBLE
+                recipe_detail_app_bar_title.visibility = INVISIBLE
+
+            }
+        }
+        appBarLayout.addOnOffsetChangedListener(offsetChangedListener)
+    }
+
+    private fun changeFavorite() {
+        viewModel.changeRecipeFavorite(mRecipe.recipeId, !isFavorite)
     }
 
     private fun shareRecipe() {
@@ -100,6 +130,7 @@ class RecipeDetailsFragment : BaseFragment() {
             .load(recipe.imageUrl)
             .into(recipe_detail_image)
 
+        recipe_detail_app_bar_title.text = recipe.title
         recipe_detail_title.text = recipe.title
         recipe_detail_publisher.text = recipe.publisher
         recipe_detail_social_score.text = recipe.socialRank.roundToInt().toString()
@@ -108,32 +139,29 @@ class RecipeDetailsFragment : BaseFragment() {
 
         ingredientsContainer = ingredients_container
         ingredientsContainer.removeAllViews()
-        
+
         recipe.ingredients?.forEach {
             val view = TextView(context!!)
             view.text = getString(R.string.ingredient, it)
+            view.textSize = 16f
             ingredientsContainer.addView(view)
+            animateChange(view)
+        }
+
+        if (recipe.ingredients?.isNullOrEmpty()!!) {
+            ingredientsContainer.apply {
+                val view = TextView(context)
+                view.text = resources.getString(R.string.missing_ingredients_list)
+                view.textSize = 16f
+                this.addView(view)
+            }
         }
     }
 
     private fun animateChange(view: View) {
-        if (isFavorite) {
-//            recipe_detail_favorite_icon.setImageResource(R.drawable.ic_not_favorite)
-            isFavorite = false
-            ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
-
-                repeatMode = ObjectAnimator.RESTART
-            }.start()
-        } else {
-//            recipe_detail_favorite_icon.setImageResource(R.drawable.ic_favorite)
-            isFavorite = true
-            ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
-                repeatMode = ObjectAnimator.RESTART
-                duration = 400L
-            }.start()
-        }
-        viewModel.changeRecipeFavorite(mRecipe.recipeId, isFavorite)
+        ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
+            duration = 400L
+            repeatMode = ObjectAnimator.RESTART
+        }.start()
     }
-
-
 }
