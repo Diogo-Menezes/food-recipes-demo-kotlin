@@ -16,53 +16,51 @@
         android:animateLayoutChanges="true"
         android:background="@android:color/transparent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/recipe_detail_motion_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/recipe_detail_top_bar_size"
-            app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed"
+            app:layoutDescription="@xml/recipe_details_anim">
 
             <ImageView
                 android:id="@+id/recipe_detail_image"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/recipe_image_height"
+                android:contentDescription="@string/recipe_image"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/vegan" />
-
-            <View
-                android:id="@+id/recipe_detail_title_view_background"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:alpha="0.25"
-                android:background="@drawable/gradient"
-                app:layout_constraintBottom_toBottomOf="@id/recipe_detail_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recipe_detail_image" />
+<!--            <View-->
+<!--                android:id="@+id/recipe_detail_title_view_background"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:alpha="0.25"-->
+<!--                android:background="@drawable/gradient"-->
+<!--                app:layout_constraintBottom_toBottomOf="@id/recipe_detail_title"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/recipe_detail_image" />-->
 
             <TextView
                 android:id="@+id/recipe_detail_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:gravity="center"
                 android:minHeight="48dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/primaryColor"
+                android:background="@drawable/gradient"
                 android:textSize="@dimen/recipe_title_text_size"
                 android:textStyle="bold|italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/recipe_detail_image"
-                tools:text="Recipe Title" />
+                tools:text="Recipe Title"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.motion.widget.MotionLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -73,8 +71,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
 
 
             <TextView
@@ -212,24 +210,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/recipe_detail_app_bar_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:ellipsize="end"
-            android:lines="1"
-            android:textColor="@color/primaryColor"
-            android:textSize="20sp"
-            android:textStyle="bold|italic"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@id/recipe_detail_top_bar_layout"
-            app:layout_constraintEnd_toStartOf="@id/recipe_detail_favorite_icon"
-            app:layout_constraintStart_toEndOf="@id/recipe_detail_close_icon"
-            app:layout_constraintTop_toTopOf="@id/recipe_detail_top_bar_layout"
-            tools:text="Recipe Title"
-            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/recipe_detail_favorite_icon"

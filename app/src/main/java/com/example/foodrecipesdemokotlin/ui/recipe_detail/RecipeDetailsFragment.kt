@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -57,8 +57,10 @@ class RecipeDetailsFragment : BaseFragment() {
         val appBarLayout = recipe_detail_app_bar_layout
         val offsetChangedListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             Log.i("RecipeDetailsFragment", "setScrollListener: $verticalOffset \nrange:  ${appBarLayout.totalScrollRange}")
+            val seekPosition = -verticalOffset / appBarLayout.totalScrollRange.toFloat()
+            recipe_detail_motion_layout.progress = seekPosition
 
-            if (verticalOffset <= (-appBarLayout.totalScrollRange / 2)) {
+            /*if (verticalOffset <= (-appBarLayout.totalScrollRange / 2)) {
                 recipe_detail_title.visibility = INVISIBLE
                 recipe_detail_title_view_background.visibility = INVISIBLE
                 recipe_detail_app_bar_title.visibility = VISIBLE
@@ -68,7 +70,9 @@ class RecipeDetailsFragment : BaseFragment() {
                 recipe_detail_title_view_background.visibility = VISIBLE
                 recipe_detail_app_bar_title.visibility = INVISIBLE
 
-            }
+            }*/
+
+
         }
         appBarLayout.addOnOffsetChangedListener(offsetChangedListener)
     }
@@ -130,7 +134,7 @@ class RecipeDetailsFragment : BaseFragment() {
             .load(recipe.imageUrl)
             .into(recipe_detail_image)
 
-        recipe_detail_app_bar_title.text = recipe.title
+//        recipe_detail_app_bar_title.text = recipe.title
         recipe_detail_title.text = recipe.title
         recipe_detail_publisher.text = recipe.publisher
         recipe_detail_social_score.text = recipe.socialRank.roundToInt().toString()
