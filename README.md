@@ -6,21 +6,11 @@ A food recipe search app with retrofit, livedata and using android best practice
 <p>The UI was developed as far as enough for displaying the results.</p>
 
 # Screenshots
-
-![Category Selection]( "Category Selection")
-![Search](recipes-kotlin-mobile.png "Search function")
-![List of recipes1](recipes-kotlin-mobile1.png "List of searched recipes")
-<br></br>
-![List of recipes2](recipes-kotlin-mobile2.png "List of searched recipes loading")
-![Recipe details cached](screens/screen4.png "Recipe details")
-![Recipe details no internet](screens/screen6.png "Recipe details of no cached recipe")
-<br></br>
-# Screenshots - Dark Mode
-
-![List of recipes3](screens/screen8.png "Recipe List dark mode")
-![Recipe details](screens/screen7.png "Recipe details dark mode")
-  <br>
-  <br>
+<p>
+<img src="recipes-kotlin-mobile.png" width="150px"/>
+<img src="recipes-kotlin-mobile1.png" width="150px"/>
+<img src="recipes-kotlin-mobile2.png" width="150px"/>
+</p>
   
 # Libraries Used
   <p><b>Lifecycles</b>- Create a UI that automatically responds to lifecycle events.</p>
