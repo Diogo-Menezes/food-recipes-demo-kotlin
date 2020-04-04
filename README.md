@@ -1,17 +1,10 @@
 <h1 align="center">Recipes Search Demo</h1>
-<img src="recipes-kotlin-mobile-mock.jpg" heigth="150px"/>
 <p>Demo app for testing RestApi Calls.
 A food recipe search app with retrofit, livedata and using android best practices.</p>
 <p>The app is currently not being developed.</p>
 <p>The UI was developed as far as enough for displaying the results.</p>
+<img src="recipes-kotlin-mobile-mock.jpg" heigth="150px"/>
 
-# Screenshots
-<p>
-<img src="recipes-kotlin-mobile.png" width="150px"/>
-<img src="recipes-kotlin-mobile1.png" width="150px"/>
-<img src="recipes-kotlin-mobile2.png" width="150px"/>
-</p>
-  
 # Libraries Used
   <p><b>Lifecycles</b>- Create a UI that automatically responds to lifecycle events.</p>
   <p><b>LiveData</b> - Build data objects that notify views when the underlying database changes.</p>
@@ -35,13 +28,11 @@ A food recipe search app with retrofit, livedata and using android best practice
   <div class="center" align="center">
     <img class="center" src="https://developer.android.com/topic/libraries/architecture/images/final-architecture.png" height="400">
   </div>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-
-### Disclaimer
-###### Although the code was written by me, the current app was developed as part of a course on android architecture.</p>
+# Screenshots
+<p>
+<img src="recipes-kotlin-mobile.png" width="150px"/>
+<img src="recipes-kotlin-mobile1.png" width="150px"/>
+<img src="recipes-kotlin-mobile2.png" width="150px"/>
+</p>
 
 
