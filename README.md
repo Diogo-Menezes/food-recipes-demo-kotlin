@@ -1,10 +1,9 @@
-# Recipes Search Demo
-![header](recipes-kotlin-mobile-mock.jpg 'header')
+<h1 align="center">Recipes Search Demo</h1>
+<img src="recipes-kotlin-mobile-mock.jpg" heigth="150px"/>
 <p>Demo app for testing RestApi Calls.
 A food recipe search app with retrofit, livedata and using android best practices.</p>
 <p>The app is currently not being developed.</p>
 <p>The UI was developed as far as enough for displaying the results.</p>
-<br>
 
 # Screenshots
 
