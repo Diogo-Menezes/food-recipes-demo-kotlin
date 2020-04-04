@@ -1,8 +1,7 @@
 <h1 align="center">Recipes Search Demo</h1>
 <p>Demo app for testing RestApi Calls.</p>
-<p>A food recipe search app with retrofit, livedata and using android best practices.</p>
-<p>The app is currently not being developed.</p>
-<p>The UI was developed as far as enough for displaying the results.</p>
+<p>A food recipe search app with retrofit, livedata and using android best practices. The app is currently not being developed.
+ The UI was developed as far as enough for displaying the results.</p>
 <img src="recipes-kotlin-mobile-mock.jpg" heigth="150px"/>
 
 # Libraries Used
@@ -25,14 +24,15 @@
 # App architecture
   <p>The app was developed taking in account the best practices and recommended architecture from Google for building apps.</p>
   <p>It uses the repository pattern and the single source of truth. Each component depends only on the component one level below it. For example, activities depend only on a view model. The repository is the only class that depends on multiple other classes.</p>
-  <div class="center" align="center">
-    <img class="center" src="https://developer.android.com/topic/libraries/architecture/images/final-architecture.png" height="400">
-  </div>
+  <p align="center">
+    <img src="https://developer.android.com/topic/libraries/architecture/images/final-architecture.png" height="400px">
+  </p>
+  
 # Screenshots
 <p>
-<img src="recipes-kotlin-mobile.png" width="150px"/>
-<img src="recipes-kotlin-mobile1.png" width="150px"/>
-<img src="recipes-kotlin-mobile2.png" width="150px"/>
+<img src="recipes-kotlin-mobile.png" width="250px"/>
+<img src="recipes-kotlin-mobile1.png" width="250px"/>
+<img src="recipes-kotlin-mobile2.png" width="250px"/>
 </p>
 
 
